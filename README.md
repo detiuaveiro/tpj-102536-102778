@@ -1,2 +1,2 @@
-# projecto-mini-jogo-leoalmPT
-projecto-mini-jogo-leoalmPT created by GitHub Classroom
+# tpj-102536-102778
+Fireboy and Watergirl
