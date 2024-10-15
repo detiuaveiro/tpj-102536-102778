@@ -4,6 +4,7 @@ from pygame.sprite import Group
 from pygame.time import Clock
 import logging
 import json
+from typing import Generator
 
 from Utils import Event, Observer, Events
 
@@ -38,13 +39,13 @@ class Subject(Observer):
                 pressed_keys.append(event.key)
         logging.info(json.dumps({
             "frame": self.frame,
+            "event": "KEY_PRESSED",
             "keys": pressed_keys
         }))
         self.frame += 1
 
 
     def update_game(self) -> None:
-        Events.add(Event.UPDATE_GAME)
         for event, kwargs in Events.get():
             Events.notify(event, **kwargs)
 
@@ -57,10 +58,29 @@ class Subject(Observer):
         self.clock.tick(self.fps)
 
 
-    def run(self) -> None:
+    def replay(self, file) -> Generator:
+        with open(file, "r") as f:
+            lines = f.readlines()
+        for i, line in enumerate(lines):
+            data = json.loads(line)
+            if data["event"] == "KEY_PRESSED":
+                for key in data["keys"]:
+                    Events.add(Event.KEY_PRESSED, key=key)
+            if i == len(lines) - 1:
+                self.running = False
+            yield
+            
+
+    def run(self, file=None) -> None:
         self.display = pygame.display.set_mode(self.display_size)
+        if file:
+            replay = self.replay(file)
         while self.running:
-            self.process_input()
+            if file:
+                next(replay)
+            else:
+                self.process_input()
+            Events.add(Event.UPDATE_GAME)
             self.update_game()
             self.render()
         pygame.quit()

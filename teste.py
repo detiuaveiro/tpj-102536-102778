@@ -17,4 +17,5 @@ class Test(Subject):
     
 
 a = Test()
-a.run()
+# a.run()
+a.run("replay.jsonl")
