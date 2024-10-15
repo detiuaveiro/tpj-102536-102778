@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import pygame
 from pygame import Surface
 from pygame.sprite import Group
@@ -8,7 +7,7 @@ import json
 
 from Utils import Event, Observer, Events
 
-class Subject(Observer, ABC):
+class Subject(Observer):
 
     def __init__(self):
         Observer.__init__(self)
@@ -29,18 +28,13 @@ class Subject(Observer, ABC):
         )
 
 
-    @abstractmethod
-    def on_key_down(self, key: int) -> None:
-        pass
-
-
     def process_input(self) -> None:
         pressed_keys = []
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
-                self.on_key_down(event.key)
+                Events.add(Event.KEY_PRESSED, key=event.key)
                 pressed_keys.append(event.key)
         logging.info(json.dumps({
             "frame": self.frame,

@@ -1,12 +1,14 @@
-from typing import Generator
+from typing import Generator, TYPE_CHECKING
 
-from Utils import Event, Observer
+from Utils import Event
 
+if TYPE_CHECKING:
+    from Utils import Observer
 
 class Events:
     
     _events: list[(Event, dict)] = []
-    _observers: dict[Event, list[Observer]] = {}
+    _observers: dict[Event, list['Observer']] = {}
 
 
     @staticmethod
@@ -22,20 +24,20 @@ class Events:
 
 
     @staticmethod
-    def register(event: Event, observer: Observer):
+    def register(event: Event, observer: 'Observer') -> None:
         if event not in Events._observers:
             Events._observers[event] = []
         Events._observers[event].append(observer)
 
     
     @staticmethod
-    def unregister(event: Event, observer: Observer):
+    def unregister(event: Event, observer: 'Observer') -> None:
         if event in Events._observers:
             Events._observers[event].remove(observer)
 
 
     @staticmethod
-    def notify(event: Event, **kwargs):
+    def notify(event: Event, **kwargs) -> None:
         event_handlers = Events._observers.get(event, [])
         for observer in event_handlers:
             observer.on_notify(event, **kwargs)
