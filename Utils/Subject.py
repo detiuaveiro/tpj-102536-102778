@@ -71,9 +71,9 @@ class Subject(Observer):
                     "event": "KEY_PRESSED",
                     "keys": data["keys"]
                 }))
-            if i == len(lines) - 1:
-                self.running = False
-            yield
+                if i == len(lines) - 1:
+                    self.running = False
+                yield
             
 
     def run(self, file=None) -> None:
