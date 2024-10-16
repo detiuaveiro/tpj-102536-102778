@@ -5,17 +5,20 @@ class Test(Subject):
     def __init__(self):
         super().__init__()
         self.fps = 1
-        self.register(Event.KEY_PRESSED, self.print_key)
-        self.register(Event.UPDATE_GAME, self.update)
+        self.register_many(
+            Event.KEY_PRESSED, 
+            Event.UPDATE_GAME
+        )
 
-
-    def print_key(self, key: int):
+    def on_key_pressed(self, key: int):
         print(f"Key: {key}")
 
-    def update(self):
+    def on_update_game(self):
         print("update")
     
 
 a = Test()
 # a.run()
 a.run("replay.jsonl")
+
+# print(Event.KEY_PRESSED.name)

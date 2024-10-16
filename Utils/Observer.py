@@ -21,3 +21,9 @@ class Observer():
     def unregister(self, event: Event) -> None:
         Events.unregister(event, self)
         self.callbacks.pop(event)
+
+
+    def register_many(self, *events: list[Event]) -> None:
+        for event in events:
+            fn = getattr(self, f"on_{event.name.lower()}")
+            self.register(event, fn)
