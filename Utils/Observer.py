@@ -7,10 +7,8 @@ class Observer():
     
 
     def on_notify(self, event: Event, **kwargs) -> None:
-        if kwargs:
-            self.callbacks.get(event, lambda: None)(**kwargs)
-        else:
-            self.callbacks.get(event, lambda: None)()
+        self.callbacks.get(event, lambda: None)(**kwargs)
+
 
 
     def register(self, event: Event, callback: callable) -> None:
