@@ -67,10 +67,11 @@ class Subject(Observer):
                 for key in data["keys"]:
                     Events.add(Event.KEY_PRESSED, key=key)
                 logging.info(json.dumps({
-                    "frame": i,
+                    "frame": self.frame,
                     "event": "KEY_PRESSED",
                     "keys": data["keys"]
                 }))
+                self.frame += 1
                 if i == len(lines) - 1:
                     self.running = False
                 yield
