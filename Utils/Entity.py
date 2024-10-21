@@ -12,3 +12,17 @@ class Entity(Observer, Sprite):
         self.id = uuid4()
 
 
+    def __eq__(self, other):
+        if isinstance(other, Entity):
+            return self.id == other.id
+        return False
+
+
+    def __hash__(self):
+        return self.id.int
+    
+
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.id})"
+
+

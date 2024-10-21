@@ -8,5 +8,5 @@ class E(Entity):
 
 
 if __name__ == "__main__":
-    e1 = E()
-    print(e1.id)
+    e = E()
+    print(e)
