@@ -1,18 +1,12 @@
 
-from Utils import Subject, Event
+from Utils import Event, Events, Observer, Entity
 
-class Teste(Subject):
+
+class E(Entity):
     def __init__(self):
         super().__init__()
-        self.fps = 1
-        self.register_many(
-            Event.UPDATE_GAME,
-        )
-
-    def on_update_game(self):
-        print("on_update_game")
 
 
 if __name__ == "__main__":
-    t = Teste()
-    t.run()
+    e1 = E()
+    print(e1.id)

@@ -1,14 +1,11 @@
-from typing import Generator, TYPE_CHECKING
+from typing import Generator
 
 from Utils import Event
-
-if TYPE_CHECKING:
-    from Utils import Observer
 
 class Events:
     
     _events: list[(Event, dict)] = []
-    _observers: dict[Event, list['Observer']] = {}
+    _observers: dict[Event, list[callable]] = {}
 
 
     @staticmethod
@@ -24,20 +21,13 @@ class Events:
 
 
     @staticmethod
-    def register(event: Event, observer: 'Observer') -> None:
+    def register(event: Event, callback: callable) -> None:
         if event not in Events._observers:
             Events._observers[event] = []
-        Events._observers[event].append(observer)
-
-    
-    @staticmethod
-    def unregister(event: Event, observer: 'Observer') -> None:
-        if event in Events._observers:
-            Events._observers[event].remove(observer)
+        Events._observers[event].append(callback)
 
 
     @staticmethod
     def notify(event: Event, **kwargs) -> None:
-        event_handlers = Events._observers.get(event, [])
-        for observer in event_handlers:
-            observer.on_notify(event, **kwargs)
+        for callback in Events._observers.get(event, []):
+            callback(**kwargs)

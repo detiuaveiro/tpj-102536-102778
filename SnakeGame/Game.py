@@ -19,7 +19,7 @@ class Game(Subject):
         self.sprites.add(self.snake)
         self.sprites.add(self.food)
 
-        self.register_many(
+        self.register(
             Event.UPDATE_GAME,
         )
 

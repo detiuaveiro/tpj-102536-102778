@@ -1,19 +1,17 @@
 import pygame
 from pygame import Surface
-from pygame.sprite import Sprite
 
-from Utils import Event, Observer
+from Utils import Event, Entity
 
 import random
 # set seed
 random.seed(42)
 
 
-class Food(Observer, Sprite):
+class Food(Entity):
 
     def __init__(self, color, width, height, scale):
-        Observer.__init__(self)
-        Sprite.__init__(self)
+        super().__init__()
         self.color = color
         self.width = width
         self.height = height
@@ -25,7 +23,7 @@ class Food(Observer, Sprite):
         self.rect = self.image.get_rect()
         self.update()
 
-        self.register_many(
+        self.register(
             Event.EAT
         )
 

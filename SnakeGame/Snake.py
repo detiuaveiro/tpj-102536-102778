@@ -1,15 +1,13 @@
 import pygame
 from pygame import Surface
-from pygame.sprite import Sprite
 
-from Utils import Event, Observer
+from Utils import Event, Entity
 from SnakeGame.Direction import Direction
 
-class Snake(Observer, Sprite):
+class Snake(Entity):
 
     def __init__(self, color, width, height, scale):
-        Observer.__init__(self)
-        Sprite.__init__(self)
+        super().__init__()
         self.color = color
         self.width = width
         self.height = height
@@ -33,7 +31,7 @@ class Snake(Observer, Sprite):
             pygame.K_RIGHT: Direction.RIGHT
         }
 
-        self.register_many(
+        self.register(
             Event.KEY_PRESSED,
             Event.UPDATE_GAME,
             Event.EAT
