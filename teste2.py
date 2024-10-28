@@ -1,12 +1,8 @@
+from itertools import cycle
 
-from Utils import Event, Events, Observer, Entity
+lst = [1, 2, 3, 4, 5]
 
+gen = cycle(lst)
 
-class E(Entity):
-    def __init__(self):
-        super().__init__()
-
-
-if __name__ == "__main__":
-    e = E()
-    print(e)
+for _ in range(10):
+    print(next(gen))

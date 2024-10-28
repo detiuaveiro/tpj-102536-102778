@@ -23,11 +23,11 @@ class FSM:
         self.mapping[new] = self.mapping.pop(old)
 
 
-    def update(self, key: str) -> None:
+    def update(self, key: str, **kwargs) -> None:
         transitions = self.mapping.get(key, None)
         if transitions is None or self.current_state not in transitions:
             return
         next_state, callback = transitions[self.current_state]
         self.current_state = next_state
         if callback is not None:
-            callback()    
+            callback(**kwargs)  
