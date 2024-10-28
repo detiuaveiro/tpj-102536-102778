@@ -48,6 +48,7 @@ class Subject(Observer, ABC):
             if event.type == pygame.QUIT:
                 self.running = False
             elif (event.type == pygame.KEYDOWN):
+                # TODO - Add support for key release and send KEY_UPDATE until key is released
                 Events.add(Event.KEY_PRESSED, key=event.key)
                 pressed_keys.append(event.key)
 
