@@ -1,5 +1,6 @@
 from pygame.sprite import Sprite
-from uuid import uuid4
+from pygame.rect import Rect
+from uuid import uuid4, UUID
 
 from Utils import Observer, FSM
 
@@ -9,8 +10,9 @@ class Entity(Observer, Sprite):
     def __init__(self):
         Observer.__init__(self)
         Sprite.__init__(self)
-        self.id = uuid4()
-        self.fsm = FSM()
+        self.id: UUID = uuid4()
+        self.fsm: FSM = FSM()
+        self.hitbox: Rect = None
 
 
     def __eq__(self, other):
