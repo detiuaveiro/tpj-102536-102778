@@ -20,6 +20,7 @@ class Subject(Observer, ABC):
 
         self.frame: int = 0
         self.logs: list[dict] = []
+        self.keys_down: set[int] = set()
 
         logging.basicConfig(
             filename="game.log",
@@ -43,16 +44,15 @@ class Subject(Observer, ABC):
 
 
     def process_input(self) -> None:
-        pressed_keys = []
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif (event.type == pygame.KEYDOWN):
-                # TODO - Add support for key release and send KEY_UPDATE until key is released
-                Events.add(Event.KEY_PRESSED, key=event.key)
-                pressed_keys.append(event.key)
+                self.keys_down.add(event.key)
+            elif (event.type == pygame.KEYUP):
+                self.keys_down.remove(event.key)
 
-        if pressed_keys:
+        if pressed_keys := list(self.keys_down):
             self.log(Event.KEY_PRESSED, keys=pressed_keys)
         self.frame += 1
 

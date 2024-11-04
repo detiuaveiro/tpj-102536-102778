@@ -5,26 +5,22 @@ class FSM:
     
     def __init__(self):
         self.current_state: Optional[Enum] = None
-        self.mapping: dict[str, dict[Enum, tuple[Enum, callable]]] = {} # {key: {state: (next_state, callback)}}
+        self.mapping: dict[Enum, dict[Enum, tuple[Enum, callable]]] = {} # {event: {state: (next_state, callback)}}
 
 
     def set_state(self, state: Enum) -> None:
         self.current_state = state
 
 
-    def set_transitions(self, *transitions: tuple[str, Enum, Enum, callable]) -> None:
-        for key, current_state, next_state, callback in transitions:
-            if key not in self.mapping:
-                self.mapping[key] = {}
-            self.mapping[key][current_state] = (next_state, callback)
+    def set_transitions(self, *transitions: tuple[Enum, Enum, Enum, callable]) -> None:
+        for event, current_state, next_state, callback in transitions:
+            if event not in self.mapping:
+                self.mapping[event] = {}
+            self.mapping[event][current_state] = (next_state, callback)
 
 
-    def change_key(self, old: str, new: str) -> None:
-        self.mapping[new] = self.mapping.pop(old)
-
-
-    def update(self, key: str, **kwargs) -> None:
-        transitions = self.mapping.get(key, None)
+    def update(self, event: Enum, **kwargs) -> None:
+        transitions = self.mapping.get(event, None)
         if transitions is None or self.current_state not in transitions:
             return
         next_state, callback = transitions[self.current_state]

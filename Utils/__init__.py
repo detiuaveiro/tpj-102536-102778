@@ -4,3 +4,4 @@ from .Observer import Observer
 from .Subject import Subject
 from .Entity import Entity
 from .Locator import Locator
+from .FSM import FSM
