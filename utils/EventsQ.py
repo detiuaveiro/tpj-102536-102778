@@ -1,6 +1,6 @@
 from typing import Generator
 
-from Utils import Event
+from utils import Event
 
 class EventsQ:
     

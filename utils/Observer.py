@@ -1,4 +1,4 @@
-from Utils import Event, EventsQ
+from utils import Event, EventsQ
 
 class Observer():
 

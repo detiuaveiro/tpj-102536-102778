@@ -1,5 +1,5 @@
 
-from Utils import Subject, Event, Events
+from utils import Subject, Event, Events
 
 from SnakeGame.Snake import Snake
 from SnakeGame.Food import Food

@@ -5,7 +5,7 @@ import logging
 import json
 from abc import ABC, abstractmethod
 
-from Utils import Event, Observer, EventsQ
+from utils import Event, Observer, EventsQ
 
 class Subject(Observer, ABC):
 
@@ -33,10 +33,6 @@ class Subject(Observer, ABC):
     @abstractmethod
     def render(self) -> None:
         pass
-
-
-    def set_fps(self, fps: int) -> None:
-        self.fps = fps
 
 
     def set_display_size(self, width: int, height: int) -> None:

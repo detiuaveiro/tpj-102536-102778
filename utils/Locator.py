@@ -1,4 +1,4 @@
-from Utils import Entity
+from utils import Entity
 
 class Locator:
 

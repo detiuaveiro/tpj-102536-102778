@@ -1,7 +1,7 @@
 import pygame
 from pygame import Surface
 
-from Utils import Event, Entity
+from utils import Event, Entity
 
 import random
 # set seed

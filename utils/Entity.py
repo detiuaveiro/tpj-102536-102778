@@ -2,7 +2,7 @@ from pygame.sprite import Sprite
 from pygame.rect import Rect
 from uuid import uuid4, UUID
 
-from Utils import Observer, FSM
+from utils import Observer, FSM
 
 
 class Entity(Observer, Sprite):
