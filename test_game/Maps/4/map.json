@@ -1,0 +1,6 @@
+{
+    "tileset_image": "assets/Tilesets/BasicGreen.png",
+    "tileset_columns": 10,
+    "tileset_rows": 4,
+    "tile_size": 16
+}

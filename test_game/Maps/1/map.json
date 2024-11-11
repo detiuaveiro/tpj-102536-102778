@@ -1,0 +1,6 @@
+{
+    "tileset_image": "assets/Tilesets/DarkCastle.png",
+    "tileset_columns": 5,
+    "tileset_rows": 5,
+    "tile_size": 16
+}
