@@ -26,9 +26,9 @@ class Teste(Subject):
         self.keys.append(key)
 
 
-    def render(self):
+    def draw(self):
         self.display.fill("white")
-        text = pygame.font.SysFont(None, 36).render(str(self.keys), True, "black")
+        text = pygame.font.SysFont(None, 30).render(str(self.keys), True, "black")
         self.display.blit(text, (10, 10))
 
     
