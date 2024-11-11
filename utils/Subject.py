@@ -40,6 +40,7 @@ class Subject(Observer, ABC):
 
 
     def process_input(self) -> None:
+        EventsQ.add(Event.NEW_FRAME)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -50,6 +51,8 @@ class Subject(Observer, ABC):
 
         if pressed_keys := list(self.keys_down):
             self.log(Event.KEY_PRESSED, keys=pressed_keys)
+            for key in pressed_keys:
+                EventsQ.add(Event.KEY_PRESSED, key=key)
         self.frame += 1
 
 
@@ -69,10 +72,16 @@ class Subject(Observer, ABC):
             EventsQ.notify(event, **kwargs)
 
 
+    def render_(self) -> None:
+        self.render()
+        pygame.display.flip()
+        self.clock.tick(self.fps)
+
+
     def run(self) -> None:
         while self.running:
             self.process_input()
             self.update_game()
-            self.render()
+            self.render_()
         pygame.quit()
         logging.shutdown()
