@@ -1,8 +1,14 @@
-from itertools import cycle
+import pygame
 
-lst = [1, 2, 3, 4, 5]
+pygame.init()
+print("Joystics: ", pygame.joystick.get_count())
+my_joystick = pygame.joystick.Joystick(0)
+my_joystick.init()
+clock = pygame.time.Clock()
 
-gen = cycle(lst)
+while 1:
+    for event in pygame.event.get():
+        print(my_joystick.get_axis(0),  my_joystick.get_axis(1))
+        clock.tick(40)
 
-for _ in range(10):
-    print(next(gen))
+pygame.quit ()
