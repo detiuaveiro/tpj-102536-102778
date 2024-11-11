@@ -2,7 +2,7 @@ from typing import Generator
 
 from Utils import Event
 
-class Events:
+class EventsQ:
     
     _events: list[(Event, dict)] = []
     _observers: dict[Event, list[callable]] = {}
@@ -11,23 +11,23 @@ class Events:
     @staticmethod
     def add(event: Event, **kwargs) -> None:
         if event:
-            Events._events.append((event, kwargs))
+            EventsQ._events.append((event, kwargs))
 
 
     @staticmethod
     def get() -> Generator[tuple[Event, dict], None, None]:
-        while Events._events:
-            yield Events._events.pop(0)
+        while EventsQ._events:
+            yield EventsQ._events.pop(0)
 
 
     @staticmethod
     def register(event: Event, callback: callable) -> None:
-        if event not in Events._observers:
-            Events._observers[event] = []
-        Events._observers[event].append(callback)
+        if event not in EventsQ._observers:
+            EventsQ._observers[event] = []
+        EventsQ._observers[event].append(callback)
 
 
     @staticmethod
     def notify(event: Event, **kwargs) -> None:
-        for callback in Events._observers.get(event, []):
+        for callback in EventsQ._observers.get(event, []):
             callback(**kwargs)

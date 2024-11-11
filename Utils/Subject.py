@@ -5,7 +5,7 @@ import logging
 import json
 from abc import ABC, abstractmethod
 
-from Utils import Event, Observer, Events
+from Utils import Event, Observer, EventsQ
 
 class Subject(Observer, ABC):
 
@@ -68,9 +68,9 @@ class Subject(Observer, ABC):
 
 
     def update_game(self) -> None:
-        Events.add(Event.UPDATE_GAME)
-        for event, kwargs in Events.get():
-            Events.notify(event, **kwargs)
+        EventsQ.add(Event.UPDATE_GAME)
+        for event, kwargs in EventsQ.get():
+            EventsQ.notify(event, **kwargs)
 
 
     def run(self) -> None:

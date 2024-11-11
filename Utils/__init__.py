@@ -1,5 +1,5 @@
 from .Event import Event
-from .Events import Events
+from .EventsQ import EventsQ
 from .Observer import Observer
 from .Subject import Subject
 from .Entity import Entity
