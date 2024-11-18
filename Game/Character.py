@@ -1,13 +1,27 @@
 import pygame
 from pathlib import Path
 from utils import Entity, Event
-from Game.States import States
+from enum import Enum, auto
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100
-GRAVITY = 0.75
+GRAVITY = 0.4
 HORIZONTAL_SPEED = 1
-VERTICAL_SPEED = 12
+VERTICAL_SPEED = 10
+
+
+class Transition(Enum):
+    JUMP = auto()
+    MOVE = auto()
+    ON_GROUND = auto()
+    DEFAULT = auto()
+
+
+class States(Enum):
+    IDLE = 'idle'
+    JUMPING = 'jumping'
+    DEATH = 'death'
+    RUNNING = 'running'
 
 
 class Character(Entity):
@@ -23,20 +37,18 @@ class Character(Entity):
         self.vel_x = 0
         self.vel_y = 0
         self.direction = 0 # 0: right, 1: left
+        self.running = False
         
         self.fsm.set_transitions(
-            (Event.JUMP, States.IDLE, States.JUMPING, self.jump),
-            (Event.JUMP, States.RUNNING, States.JUMPING, self.jump),
-            (Event.MOVE_RIGHT, States.IDLE, States.RUNNING, self.right),
-            (Event.MOVE_RIGHT, States.RUNNING, States.RUNNING, self.right),
-            (Event.MOVE_RIGHT, States.JUMPING, States.JUMPING, self.right),
-            (Event.MOVE_LEFT, States.IDLE, States.RUNNING, self.left),
-            (Event.MOVE_LEFT, States.RUNNING, States.RUNNING, self.left),
-            (Event.MOVE_LEFT, States.JUMPING, States.JUMPING, self.left),
-            (Event.ON_GROUND, States.JUMPING, States.IDLE, None),
-            (Event.NONE, States.RUNNING, States.IDLE, None),
-            (Event.NONE, States.IDLE, States.IDLE, None),
-            (Event.NONE, States.JUMPING, States.JUMPING, None)
+            (Transition.JUMP, States.IDLE, States.JUMPING, self.move),
+            (Transition.JUMP, States.RUNNING, States.JUMPING, self.move),
+            (Transition.MOVE, States.IDLE, States.RUNNING, self.move),
+            (Transition.MOVE, States.RUNNING, States.RUNNING, self.move),
+            (Transition.MOVE, States.JUMPING, States.JUMPING, self.move),
+            (Transition.ON_GROUND, States.JUMPING, States.IDLE, None),
+            (Transition.DEFAULT, States.RUNNING, States.IDLE, None),
+            (Transition.DEFAULT, States.IDLE, States.IDLE, None),
+            (Transition.DEFAULT, States.JUMPING, States.JUMPING, None)
         )
         self.fsm.set_state(States.IDLE)
 
@@ -77,12 +89,24 @@ class Character(Entity):
         self.hitbox_rect.bottom = self.rect.bottom
 
 
-    def register_keys(self, right, left, jump):
+    def register_keys(self, right, left, jump, run):
         self.key_mapping = {
-            right: Event.MOVE_RIGHT,
-            left: Event.MOVE_LEFT,
-            jump: Event.JUMP
+            right: (Transition.MOVE, self.right),
+            left: (Transition.MOVE, self.left),
+            jump: (Transition.JUMP, self.jump),
+            run: (Transition.MOVE, self.run)
         }
+
+
+    def run(self):
+        self.running = True
+
+
+    def move(self, key):
+        if key not in self.key_mapping:
+            return
+        _, action = self.key_mapping[key]
+        action()
 
     
     def right(self):
@@ -94,18 +118,20 @@ class Character(Entity):
         self.direction = 1
         self.vel_x = -HORIZONTAL_SPEED * self.scale
 
-    
     def jump(self):
         self.vel_y = -VERTICAL_SPEED
 
 
     def on_key_pressed(self, key):
-        if key in self.key_mapping:
-            event = self.key_mapping[key]
-            self.fsm.update(event)
+        if key not in self.key_mapping:
+            return
+        transition, _ = self.key_mapping[key]
+        self.fsm.update(transition, key=key)
 
 
     def move_x(self):
+        if self.running:
+            self.vel_x *= 2
         self.rect.x += self.vel_x
         self.hitbox_rect.x += self.vel_x
 
@@ -128,7 +154,7 @@ class Character(Entity):
             self.hitbox_rect.top = rect.bottom
         else:
             self.hitbox_rect.bottom = rect.top
-            self.fsm.update(Event.ON_GROUND)
+            self.fsm.update(Transition.ON_GROUND)
         self.rect.bottom = self.hitbox_rect.bottom
         self.vel_y = 0
 
@@ -143,11 +169,14 @@ class Character(Entity):
     
 
     def on_update_game(self):
-        print(self.fsm.get_state_str())
         self.update_animation()
-        self.fsm.update(Event.NONE)
+        if self.vel_y > GRAVITY:
+            self.fsm.update(Transition.JUMP, key=None)
+        else:
+            self.fsm.update(Transition.DEFAULT)
         self.vel_y += GRAVITY
         self.vel_x = 0
+        self.running = False
 
 
     def get_hitbox_rect(self):
@@ -155,4 +184,6 @@ class Character(Entity):
     
 
     def draw(self, screen: pygame.Surface):
+        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
+        pygame.draw.rect(screen, (0, 255, 0), self.hitbox_rect, 1)
         screen.blit(self.image, self.rect)

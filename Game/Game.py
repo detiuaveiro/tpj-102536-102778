@@ -14,6 +14,7 @@ class Game(Subject):
     def __init__(self):
         super().__init__()
         self.set_display_size(DISPLAY_W, DISPLAY_H)
+        self.fps = 90
         self.register_events(
             Event.UPDATE_GAME
         )
@@ -25,28 +26,25 @@ class Game(Subject):
 
         # Players
         self.player_1 = Character('Pink Monster', x=800, y=200, scale=SCALE)
-        self.player_2 = Character('Blue Monster', x=100, y=200, scale=SCALE)
-        self.players = [self.player_1, self.player_2]
+        # self.player_2 = Character('Blue Monster', x=100, y=200, scale=SCALE)
+        self.players = [self.player_1]
         
         self.player_1.register_keys(
             right = pygame.K_RIGHT,
             left = pygame.K_LEFT,
-            jump = pygame.K_UP
+            jump = pygame.K_UP,
+            run = pygame.K_LSHIFT
         )
 
-        self.player_2.register_keys(
-            right = pygame.K_d,
-            left = pygame.K_a,
-            jump = pygame.K_w
-        )
+        # self.player_2.register_keys(
+        #     right = 'js_0_a_0_1',
+        #     left = 'js_0_a_0_-1',
+        #     jump = 'js_0_b_0'
+        # )
 
 
     def on_update_game(self):
-        for player in self.players:
-            player.move_x()
-            self.collisions_x(player)
-            player.move_y()
-            self.collisions_y(player)
+        self.move_players()
 
 
     def draw(self):
@@ -55,6 +53,17 @@ class Game(Subject):
         for player in self.players:
             player.draw(self.display)
         
+        text_fps = pygame.font.SysFont(None, 30).render(str(int(self.clock.get_fps())), True, "green")
+        self.display.blit(text_fps, (10, 10))
+
+
+    def move_players(self):
+        for player in self.players:
+            player.move_x()
+            self.collisions_x(player)
+            player.move_y()
+            self.collisions_y(player)
+
 
     def collision_rect(self, player):
         hitbox_rect = player.get_hitbox_rect()

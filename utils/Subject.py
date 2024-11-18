@@ -79,8 +79,9 @@ class Subject(Observer, ABC):
             for i in range(joystick.get_numaxes()):
                 val = joystick.get_axis(i)
                 if i in (4, 5):
-                    val += 1
-                if val > 0.3:
+                    if val > 0:
+                        keys.append(f"js_{id}_t_{i}_1")
+                elif val > 0.3:
                     keys.append(f"js_{id}_a_{i}_1")
                 elif val < -0.3:
                     keys.append(f"js_{id}_a_{i}_-1")
