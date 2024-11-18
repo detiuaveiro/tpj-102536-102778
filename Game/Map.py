@@ -25,6 +25,8 @@ class Map:
     def __init__(self, map_folder, scale):
         self.path = Path(map_folder)
         self.scale = scale
+        self.bg_img_path = None
+        self.bg_img = None
         self.tileset_img = None
         self.tileset_cols = None
         self.tileset_rows = None
@@ -45,6 +47,7 @@ class Map:
             self.tileset_cols = map_metadata['tileset_columns']
             self.tileset_rows = map_metadata['tileset_rows']
             self.tile_size = map_metadata['tile_size']
+            self.bg_img_path = map_metadata['background_image']
 
 
     def load_tiles(self):
@@ -57,8 +60,11 @@ class Map:
 
 
     def load_map(self):
+        # Load background
+        self.bg_img = pygame.image.load(self.bg_img_path)
+
+        # Load tiles
         map_details = self.read_csv()
-        
         for y, row in enumerate(map_details):
             for x, tile in enumerate(row):
                 tile_idx = int(tile)
@@ -79,6 +85,10 @@ class Map:
 
     def get_rects(self):
         return self.map_rects
+    
+
+    def get_bg(self, width, height):
+        return pygame.transform.scale(self.bg_img, (width, height))
 
 
     def draw(self, display: pygame.surface.Surface):

@@ -1,4 +1,5 @@
 from pygame.sprite import Sprite
+from pygame.surface import Surface
 from pygame.rect import Rect
 from uuid import uuid4, UUID
 
@@ -12,8 +13,9 @@ class Entity(Observer, Sprite):
         Sprite.__init__(self)
         self.id: UUID = uuid4()
         self.fsm: FSM = FSM()
+        self.image: Surface = None
+        self.rect: Rect = None
         self.hitbox: Rect = None
-
 
     def __eq__(self, other):
         if isinstance(other, Entity):

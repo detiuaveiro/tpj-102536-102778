@@ -11,6 +11,14 @@ class FSM:
     def set_state(self, state: Enum) -> None:
         self.current_state = state
 
+    
+    def get_state(self) -> Enum:
+        return self.current_state
+    
+
+    def get_state_str(self) -> str:
+        return self.current_state.value
+
 
     def set_transitions(self, *transitions: tuple[Enum, Enum, Enum, callable]) -> None:
         for event, current_state, next_state, callback in transitions:
