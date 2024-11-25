@@ -14,6 +14,8 @@ class Subject(Observer, ABC):
         pygame.init()
         self.fps: int = 60
         self.running: bool = True
+        self.paused: bool = False
+        self.menu = None
         self.display: Surface = None
         self.clock: Clock = Clock()
 
@@ -51,6 +53,10 @@ class Subject(Observer, ABC):
             elif (event.type == pygame.KEYDOWN):
                 EventsQ.add(Event.KEY_DOWN, key=event.key)
                 self.keys_down.add(event.key)
+                if event.key == pygame.K_ESCAPE:
+                    self.menu = self.menu.__class__()
+                    self.menu.sprite.active = self.paused
+                    self.paused = not self.paused
             elif (event.type == pygame.KEYUP):
                 EventsQ.add(Event.KEY_UP, key=event.key)
                 self.keys_down.remove(event.key)
@@ -100,8 +106,11 @@ class Subject(Observer, ABC):
     def update_game(self) -> None:
         EventsQ.add(Event.UPDATE_GAME)
         for event, kwargs in EventsQ.get():
-            EventsQ.notify(event, **kwargs)
-
+            if not self.paused:
+                EventsQ.notify(event, **kwargs)
+            else:
+                EventsQ.notify_one(event, self.menu, **kwargs)
+                
 
     def render(self) -> None:
         self.draw()

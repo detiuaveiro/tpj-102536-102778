@@ -31,3 +31,10 @@ class EventsQ:
     def notify(event: Event, **kwargs) -> None:
         for callback in EventsQ._observers.get(event, []):
             callback(**kwargs)
+
+
+    @staticmethod
+    def notify_one(event: Event, obj: object, **kwargs) -> None:
+        for callback in EventsQ._observers.get(event, []):
+            if callback.__self__ == obj:
+                callback(**kwargs)

@@ -26,10 +26,11 @@ class Menu(Entity):
             Event.KEY_DOWN,
         )
 
-
     def on_key_down(self, key):
         if key == pygame.K_ESCAPE:
             self.sprite.active = not self.sprite.active
+        if key == pygame.K_1:
+            self.sprite.image.fill("green")
 
 
 class Teste(Subject):
