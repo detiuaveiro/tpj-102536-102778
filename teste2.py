@@ -22,13 +22,11 @@ class Menu(Entity):
         super().__init__()
         self.sprite = MenuSprite()
 
-        self.register_events(
-            Event.KEY_DOWN,
+        self.register_paused_events(
+            Event.KEY_DOWN
         )
 
-    def on_key_down(self, key):
-        if key == pygame.K_ESCAPE:
-            self.sprite.active = not self.sprite.active
+    def on_paused_key_down(self, key):
         if key == pygame.K_1:
             self.sprite.image.fill("green")
 
@@ -43,6 +41,9 @@ class Teste(Subject):
             Event.NEW_FRAME,
             Event.KEY_PRESSED,
         )
+        self.register_paused_events(
+            Event.KEY_PRESSED
+        )
         self.keys = []
         self.menu = Menu()
 
@@ -53,6 +54,11 @@ class Teste(Subject):
 
     def on_key_pressed(self, key):
         print(f"Key pressed: {key}")
+        self.keys.append(key)
+
+
+    def on_paused_key_pressed(self, key):
+        print(f"Key paused: {key}")
         self.keys.append(key)
 
 

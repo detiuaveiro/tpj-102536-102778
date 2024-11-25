@@ -54,9 +54,9 @@ class Subject(Observer, ABC):
                 EventsQ.add(Event.KEY_DOWN, key=event.key)
                 self.keys_down.add(event.key)
                 if event.key == pygame.K_ESCAPE:
+                    self.paused = not self.paused
                     self.menu = self.menu.__class__()
                     self.menu.sprite.active = self.paused
-                    self.paused = not self.paused
             elif (event.type == pygame.KEYUP):
                 EventsQ.add(Event.KEY_UP, key=event.key)
                 self.keys_down.remove(event.key)
@@ -106,10 +106,10 @@ class Subject(Observer, ABC):
     def update_game(self) -> None:
         EventsQ.add(Event.UPDATE_GAME)
         for event, kwargs in EventsQ.get():
-            if not self.paused:
-                EventsQ.notify(event, **kwargs)
+            if self.paused:
+                EventsQ.notify_paused(event, **kwargs)
             else:
-                EventsQ.notify_one(event, self.menu, **kwargs)
+                EventsQ.notify(event, **kwargs)
                 
 
     def render(self) -> None:

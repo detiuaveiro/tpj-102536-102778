@@ -6,7 +6,7 @@ class EventsQ:
     
     _events: list[(Event, dict)] = []
     _observers: dict[Event, list[callable]] = {}
-
+    _observers_paused: dict[Event, list[callable]] = {}
 
     @staticmethod
     def add(event: Event, **kwargs) -> None:
@@ -28,13 +28,19 @@ class EventsQ:
 
 
     @staticmethod
+    def register_paused(event: Event, callback: callable) -> None:
+        if event not in EventsQ._observers_paused:
+            EventsQ._observers_paused[event] = []
+        EventsQ._observers_paused[event].append(callback)
+
+
+    @staticmethod
     def notify(event: Event, **kwargs) -> None:
         for callback in EventsQ._observers.get(event, []):
             callback(**kwargs)
 
 
     @staticmethod
-    def notify_one(event: Event, obj: object, **kwargs) -> None:
-        for callback in EventsQ._observers.get(event, []):
-            if callback.__self__ == obj:
-                callback(**kwargs)
+    def notify_paused(event: Event, **kwargs) -> None:
+        for callback in EventsQ._observers_paused.get(event, []):
+            callback(**kwargs)
