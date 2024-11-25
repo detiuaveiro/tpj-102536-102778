@@ -29,16 +29,3 @@ class Locator:
             if entity in Locator._map[interface]:
                 Locator._map[interface].remove(entity)
         Locator._all.remove(entity)
-    
-
-    @staticmethod
-    def get_collisions(entity: Entity) -> list[Entity]:
-        collisions = []
-        for other in Locator._all:
-            if entity == other:
-                continue
-            if other.hitbox is None:
-                continue
-            if entity.hitbox.colliderect(other.hitbox):
-                collisions.append(other)
-        return collisions

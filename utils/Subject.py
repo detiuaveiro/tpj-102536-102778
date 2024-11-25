@@ -4,8 +4,6 @@ from pygame.time import Clock
 import logging
 import json
 from abc import ABC, abstractmethod
-from itertools import chain
-from typing import Generator
 
 from utils import Event, Observer, EventsQ
 
@@ -16,7 +14,6 @@ class Subject(Observer, ABC):
         pygame.init()
         self.fps: int = 60
         self.running: bool = True
-        self.paused: bool = False
         self.display: Surface = None
         self.clock: Clock = Clock()
 
@@ -52,8 +49,10 @@ class Subject(Observer, ABC):
             if event.type == pygame.QUIT:
                 self.running = False
             elif (event.type == pygame.KEYDOWN):
+                EventsQ.add(Event.KEY_DOWN, key=event.key)
                 self.keys_down.add(event.key)
             elif (event.type == pygame.KEYUP):
+                EventsQ.add(Event.KEY_UP, key=event.key)
                 self.keys_down.remove(event.key)
                 
         all_keys = list(self.keys_down) + self.process_joysticks()
