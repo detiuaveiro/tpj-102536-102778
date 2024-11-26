@@ -1,34 +1,6 @@
 import pygame
-from pygame.sprite import Sprite
-from utils import Entity, Subject, Event
-
-class MenuSprite(Sprite):
-    
-    def __init__(self):
-        super().__init__()
-        self.active: bool = False
-        self.image = pygame.Surface((800, 600))
-        self.image.fill("red")
-        self.rect = self.image.get_rect()
-
-    def draw(self, screen):
-        if self.active:
-            screen.blit(self.image, self.rect)
-
-
-class Menu(Entity):
-
-    def __init__(self):
-        super().__init__()
-        self.sprite = MenuSprite()
-
-        self.register_paused_events(
-            Event.KEY_DOWN
-        )
-
-    def on_paused_key_down(self, key):
-        if key == pygame.K_1:
-            self.sprite.image.fill("green")
+from utils import Subject, Event
+from Menu import Menu
 
 
 class Teste(Subject):
@@ -37,36 +9,36 @@ class Teste(Subject):
         super().__init__()
         self.fps = 10
         self.set_display_size(800, 600)
+        self.menu = Menu(self)
         self.register_events(
-            Event.NEW_FRAME,
-            Event.KEY_PRESSED,
+            Event.KEY_DOWN,
+            Event.NEW_LEVEL
         )
-        self.register_paused_events(
-            Event.KEY_PRESSED
-        )
-        self.keys = []
-        self.menu = Menu()
+        self.paused = True
+        self.level = 1
 
 
     def on_new_frame(self):
         self.keys = []
 
 
-    def on_key_pressed(self, key):
-        print(f"Key pressed: {key}")
-        self.keys.append(key)
+    def on_key_down(self, key):
+        print(key)
 
 
-    def on_paused_key_pressed(self, key):
-        print(f"Key paused: {key}")
-        self.keys.append(key)
+    def on_new_level(self, level):
+        self.level = level
 
 
     def draw(self):
         self.display.fill("white")
-        text = pygame.font.SysFont(None, 30).render(str(self.keys), True, "black")
-        self.display.blit(text, (10, 10))
-        self.menu.sprite.draw(self.display)
+        text = pygame.font.SysFont(None, 50).render("Hello World", True, "black")
+        text_rect = text.get_rect(center=(400, 300))
+        self.display.blit(text, text_rect)
+        level_text = pygame.font.SysFont(None, 50).render(f"Level: {self.level}", True, "black")
+        level_text_rect = level_text.get_rect(center=(400, 400))
+        self.display.blit(level_text, level_text_rect)
+        self.menu.draw(self.display)
         
 
     

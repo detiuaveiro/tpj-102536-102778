@@ -6,6 +6,8 @@ class Event(Enum):
     KEY_DOWN = auto()
     KEY_UP = auto()
     KEY_PRESSED = auto()
+    NEW_LEVEL = auto()
+
     MOVE_RIGHT = auto()
     MOVE_LEFT = auto()
     JUMP = auto()

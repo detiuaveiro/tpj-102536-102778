@@ -15,7 +15,6 @@ class Subject(Observer, ABC):
         self.fps: int = 60
         self.running: bool = True
         self.paused: bool = False
-        self.menu = None
         self.display: Surface = None
         self.clock: Clock = Clock()
 
@@ -53,10 +52,6 @@ class Subject(Observer, ABC):
             elif (event.type == pygame.KEYDOWN):
                 EventsQ.add(Event.KEY_DOWN, key=event.key)
                 self.keys_down.add(event.key)
-                if event.key == pygame.K_ESCAPE:
-                    self.paused = not self.paused
-                    self.menu = self.menu.__class__()
-                    self.menu.sprite.active = self.paused
             elif (event.type == pygame.KEYUP):
                 EventsQ.add(Event.KEY_UP, key=event.key)
                 self.keys_down.remove(event.key)
