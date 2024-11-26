@@ -58,6 +58,7 @@ class MenuSprite(Sprite):
 
     def draw_options(self):
         self.image.fill("black")
+        self.draw_title()
         colors = ["white" if i != self.selected else "green" for i in range(len(self.options))]
         for option, color, pos in zip(self.options, colors, self.positions):
             text = pygame.font.Font(None, 36).render(option[0], True, pygame.Color(color))
@@ -82,7 +83,6 @@ class HomeMenu(MenuSprite):
         ]
         self.mapping = [[0], [1], [2], [3]]
         self.positions = [ (400, 150), (400, 200), (400, 250), (400, 300) ]
-        self.draw_title()
         self.draw_options()
 
 
@@ -100,7 +100,6 @@ class GameMenu(MenuSprite):
         ]
         self.mapping = [[0], [1], [2], [3], [4]]
         self.positions = [ (400, 150), (400, 200), (400, 250), (400, 300), (400, 350) ]
-        self.draw_title()
         self.draw_options()
 
 
@@ -115,7 +114,6 @@ class LevelsMenu(MenuSprite):
         ] + [("Back", menu.back)]
         self.mapping = [[i] for i in range(len(self.levels))] + [[len(self.levels)]]
         self.positions = [ (400, 150 + 50 * i) for i in range(len(self.levels) + 1) ]
-        self.draw_title()
         self.draw_options()
 
 
@@ -154,7 +152,6 @@ class SettingsMenu(MenuSprite):
         ]
 
         self.positions = [ (300, 100), (500, 100) ] + [ (200, 200 + 50 * i) for i in range(5) ] + [ (600, 200 + 50 * i) for i in range(5) ] + [ (400, 450) ]
-        self.draw_title()
         self.draw_options()
 
 
