@@ -1,23 +1,13 @@
 import pygame
 from pygame.sprite import Sprite
+import tkinter as tk
+from tkinter import filedialog
+import json
+from pathlib import Path
+
 from utils import Entity, Event, EventsQ
 
-SETTINGS = [
-    {
-        "left": pygame.K_a,
-        "right": pygame.K_d,
-        "jump": pygame.K_SPACE,
-        "sprint": pygame.K_LSHIFT,
-        "use": pygame.K_e,
-    },
-    {
-        "left": pygame.K_a,
-        "right": pygame.K_d,
-        "jump": pygame.K_SPACE,
-        "sprint": pygame.K_LSHIFT,
-        "use": pygame.K_e,
-    },
-]
+FOLDER = "settings/"
 
 
 class MenuSprite(Sprite):
@@ -123,24 +113,7 @@ class SettingsMenu(MenuSprite):
         super().__init__()
         self.title = "Settings Menu"
         self.menu = menu
-        self.options = [
-            ("Load", menu.load_controls),
-            ("Save", menu.save_controls),
-
-            (f"left: {pygame.key.name(SETTINGS[0]['left'])}", menu.controls),
-            (f"right: {pygame.key.name(SETTINGS[0]['right'])}", menu.controls),
-            (f"jump: {pygame.key.name(SETTINGS[0]['jump'])}", menu.controls),
-            (f"sprint: {pygame.key.name(SETTINGS[0]['sprint'])}", menu.controls),
-            (f"use: {pygame.key.name(SETTINGS[0]['use'])}", menu.controls),
-            
-            (f"left: {pygame.key.name(SETTINGS[1]['left'])}", menu.controls),
-            (f"right: {pygame.key.name(SETTINGS[1]['right'])}", menu.controls),
-            (f"jump: {pygame.key.name(SETTINGS[1]['jump'])}", menu.controls),
-            (f"sprint: {pygame.key.name(SETTINGS[1]['sprint'])}", menu.controls),
-            (f"use: {pygame.key.name(SETTINGS[1]['use'])}", menu.controls),
-            
-            ("Back", menu.back)
-        ]
+        self.load_options()
         self.mapping = [
             [0, 1],
             [2, 7],
@@ -155,19 +128,43 @@ class SettingsMenu(MenuSprite):
         self.draw_options()
 
 
+    def load_options(self):
+        self.options = [
+            ("Load", self.menu.load_controls),
+            ("Save", self.menu.save_controls),
+
+            (f"left: {self.get_name(self.menu.settings_[0]['left'])}", self.menu.controls),
+            (f"right: {self.get_name(self.menu.settings_[0]['right'])}", self.menu.controls),
+            (f"jump: {self.get_name(self.menu.settings_[0]['jump'])}", self.menu.controls),
+            (f"sprint: {self.get_name(self.menu.settings_[0]['sprint'])}", self.menu.controls),
+            (f"use: {self.get_name(self.menu.settings_[0]['use'])}", self.menu.controls),
+            
+            (f"left: {self.get_name(self.menu.settings_[1]['left'])}", self.menu.controls),
+            (f"right: {self.get_name(self.menu.settings_[1]['right'])}", self.menu.controls),
+            (f"jump: {self.get_name(self.menu.settings_[1]['jump'])}", self.menu.controls),
+            (f"sprint: {self.get_name(self.menu.settings_[1]['sprint'])}", self.menu.controls),
+            (f"use: {self.get_name(self.menu.settings_[1]['use'])}", self.menu.controls),
+            
+            ("Back", self.menu.back)
+        ]
+
+
     def handle_key(self, key):
         bind = self.options[self.selected][0].split(":")[0]
         if self.menu.chosing_bind:
             player = 0 if self.selected < 6 else 1
-            self.options[self.selected] = (f"{bind}: {pygame.key.name(key)}", self.menu.controls)
+            self.options[self.selected] = (f"{bind}: {self.get_name(key)}", self.menu.controls)
             self.menu.change_bind(player, bind, key)
         else:
-            if key == pygame.K_RETURN and self.selected not in (0,1,12):
-                self.options[self.selected] = (f"{bind}: [press key]", self.menu.controls)
-            elif key == None:
-                self.options[self.selected] = (f"{bind}: {pygame.key.name(SETTINGS[0][bind])}", self.menu.controls)
             super().handle_key(key)
+            if key == pygame.K_RETURN:
+                self.load_options()
+                if self.selected not in (0,1,12):
+                    self.options[self.selected] = (f"{bind}: [press key]", self.menu.controls)
+            elif key == None:
+                self.options[self.selected] = (f"{bind}: {self.get_name(SETTINGS[0][bind])}", self.menu.controls)
         self.draw_options()
+
 
     def draw_options(self):
         super().draw_options()
@@ -175,6 +172,10 @@ class SettingsMenu(MenuSprite):
             text = pygame.font.Font(None, 36).render(f"Player {i + 1}", True, pygame.Color("white"))
             text_rect = text.get_rect(center=(pos[0], pos[1]))
             self.image.blit(text, text_rect)
+
+
+    def get_name(self, key):
+        return pygame.key.name(key)
 
 
 class Menu(Entity):
@@ -190,6 +191,7 @@ class Menu(Entity):
         self.game = game
         self.menus = [HomeMenu(self)]
         self.chosing_bind = False
+        self.settings_ = json.load(open(FOLDER + "current.json")) if Path(FOLDER + "current.json").exists() else json.load(open(FOLDER + "default.json"))
 
 
     def on_paused_key_down(self, key):
@@ -242,10 +244,33 @@ class Menu(Entity):
         self.game.running = False
 
     def load_controls(self):
-        ...
+        root = tk.Tk()
+        root.withdraw()
+
+        file_path = filedialog.askopenfilename(
+            initialdir=FOLDER,
+            title="Select file",
+            filetypes=(("json files", "*.json"),)
+        )
+        if file_path:
+            with open(file_path, "r") as file:
+                self.settings_ = json.load(file)
+                json.dump(self.settings_, open(FOLDER + "current.json", "w"))
+
 
     def save_controls(self):
-        ...
+        root = tk.Tk()
+        root.withdraw()
+
+        file_path = filedialog.asksaveasfilename(
+            initialdir=FOLDER,
+            title="Select file",
+            filetypes=(("json files", "*.json"),)
+        )
+        if file_path:
+            with open(file_path, "w") as file:
+                json.dump(self.settings_, file)
+                
 
     def controls(self):
         print("Chosing bind")
@@ -253,5 +278,6 @@ class Menu(Entity):
 
     def change_bind(self, player, bind, new_key):
         print(f"Changed {player} {bind} {new_key}")
-        SETTINGS[player][bind] = new_key
+        self.settings_[player][bind] = new_key
         self.chosing_bind = False
+        json.dump(self.settings_, open(FOLDER + "current.json", "w"))
