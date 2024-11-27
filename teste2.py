@@ -31,12 +31,12 @@ class Teste(Subject):
 
 
     def draw(self):
-        self.display.fill("white")
+        self.display.fill("blue")
         text = pygame.font.SysFont(None, 50).render("Hello World", True, "black")
         text_rect = text.get_rect(center=(500, 400))
         self.display.blit(text, text_rect)
         level_text = pygame.font.SysFont(None, 50).render(f"Level: {self.level}", True, "black")
-        level_text_rect = level_text.get_rect(center=(500, 600))
+        level_text_rect = level_text.get_rect(center=(500, 500))
         self.display.blit(level_text, level_text_rect)
         self.menu.draw(self.display)
         

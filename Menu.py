@@ -18,8 +18,6 @@ class MenuSprite(Sprite):
         self.image = pygame.Surface((800, 600))
         self.image.fill("black")
         self.rect = self.image.get_rect()
-        # menu is 800x600 but the game is 1000x800
-        # centering the menu
         self.rect.center = (500, 400)
         self.options: list[tuple[str, callable]] = [] # list of options
         self.selected: int = 0 # selected option
@@ -29,7 +27,7 @@ class MenuSprite(Sprite):
         self.title: str = "" # title of the menu
 
 
-    def handle_key(self, key):
+    def handle_key(self, key, draw=True):
         if key == pygame.K_RIGHT:
             self.pos = (self.pos[0], (self.pos[1] + 1) % len(self.mapping[self.pos[0]]))
         elif key == pygame.K_LEFT:
@@ -41,7 +39,8 @@ class MenuSprite(Sprite):
         elif key == pygame.K_RETURN:
             self.options[self.mapping[self.pos[0]][self.pos[1]]][1]()
         self.selected = self.mapping[self.pos[0]][self.pos[1]]
-        self.draw_options()
+        if draw:
+            self.draw_options()
 
 
     def draw_title(self):
@@ -161,13 +160,13 @@ class SettingsMenu(MenuSprite):
             self.options[self.selected] = (f"{bind}: {self.get_name(key)}", self.menu.controls)
             self.menu.change_bind(player, bind, key)
         else:
-            super().handle_key(key)
+            super().handle_key(key, draw=False)
             if key == pygame.K_RETURN:
                 self.load_options()
                 if self.selected not in (0,1,12):
                     self.options[self.selected] = (f"{bind}: [press key]", self.menu.controls)
             elif key == None:
-                self.options[self.selected] = (f"{bind}: {self.get_name(SETTINGS[0][bind])}", self.menu.controls)
+                self.options[self.selected] = (f"{bind}: {self.get_name(self.menu.settings_[0][bind])}", self.menu.controls)
         self.draw_options()
 
 
