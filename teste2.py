@@ -1,6 +1,6 @@
 import pygame
 from utils import Subject, Event
-from Menu import Menu
+from Game.Menu import Menu
 
 
 class Teste(Subject):

@@ -3,6 +3,7 @@ import pygame
 from Game.Map import Map
 from Game.Character import Character
 from utils import Subject, Event
+from Game.Menu import Menu
 
 DISPLAY_W, DISPLAY_H = 960, 640
 SCALE = 2
@@ -15,6 +16,10 @@ class Game(Subject):
         super().__init__()
         self.set_display_size(DISPLAY_W, DISPLAY_H)
         self.fps = 90
+        self.menu = Menu(self)
+        self.paused = True
+        self.level = 1
+
         self.register_events(
             Event.UPDATE_GAME
         )
@@ -26,7 +31,6 @@ class Game(Subject):
 
         # Players
         self.player_1 = Character('Pink Monster', x=800, y=200, scale=SCALE)
-        # self.player_2 = Character('Blue Monster', x=100, y=200, scale=SCALE)
         self.players = [self.player_1]
         
         self.player_1.register_keys(
@@ -35,13 +39,6 @@ class Game(Subject):
             jump = pygame.K_UP,
             run = pygame.K_LSHIFT
         )
-
-        # self.player_2.register_keys(
-        #     right = 'js_0_a_0_1',
-        #     left = 'js_0_a_0_-1',
-        #     jump = 'js_0_b_0'
-        # )
-
 
     def on_update_game(self):
         self.move_players()
@@ -55,6 +52,8 @@ class Game(Subject):
         
         text_fps = pygame.font.SysFont(None, 30).render(str(int(self.clock.get_fps())), True, "green")
         self.display.blit(text_fps, (10, 10))
+        
+        self.menu.draw(self.display)
 
 
     def move_players(self):

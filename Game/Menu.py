@@ -17,7 +17,7 @@ class MenuSprite(Sprite):
         super().__init__()
         self.image = pygame.Surface((800, 600), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.center = (500, 400)
+        self.rect.center = (500, 350)
         self.options: list[tuple[str, callable]] = [] # list of options
         self.selected: int = 0 # selected option
         self.positions: list[tuple[int, int]] = [] # positions of options

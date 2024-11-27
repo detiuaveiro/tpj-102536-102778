@@ -2,6 +2,7 @@ import pygame
 from pathlib import Path
 from utils import Entity, Event
 from enum import Enum, auto
+from .CharacterSprite import CharacterSprite
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100
@@ -31,14 +32,24 @@ class Character(Entity):
         self.time = pygame.time.get_ticks()
         self.name = name
         self.scale = scale
+        self.sprite = CharacterSprite(name, scale)
         self.key_mapping = {}
-        self.frames = {} # {state: [[right], [left]]}
-        self.frame_idx = 0
         self.vel_x = 0
         self.vel_y = 0
-        self.direction = 0 # 0: right, 1: left
+        self.direction = 0
         self.running = False
-        
+
+        self.register_events(
+            Event.KEY_PRESSED,
+            Event.UPDATE_GAME
+        )
+
+        self.init_fsm()
+        self.setup_sprite(x, y)
+
+    
+    def init_fsm(self):
+        self.fsm.set_state(States.IDLE)
         self.fsm.set_transitions(
             (Transition.JUMP, States.IDLE, States.JUMPING, self.move),
             (Transition.JUMP, States.RUNNING, States.JUMPING, self.move),
@@ -50,43 +61,11 @@ class Character(Entity):
             (Transition.DEFAULT, States.IDLE, States.IDLE, None),
             (Transition.DEFAULT, States.JUMPING, States.JUMPING, None)
         )
-        self.fsm.set_state(States.IDLE)
-
-        self.register_events(
-            Event.KEY_PRESSED,
-            Event.UPDATE_GAME
-        )
-
-        self.load_sprites()
-        self.initialize_image_and_rect(x, y)
 
 
-    def load_sprites(self):
-        spritesheet = Path(f'Game/assets/{self.name.replace(' ', '')}')
-        files = [f for f in spritesheet.iterdir() if f.is_file() and not f.name.startswith('.')]
-        for f in files:
-            aux = f.name.split('_')
-            state = aux[0].lower()
-            n_sprites = int(aux[-1].split('.')[0])
-            spritesheet = pygame.image.load(f)
-            self.frames[state] = [[], []]
-            for i in range(n_sprites):
-                original = pygame.Surface.subsurface(spritesheet, (i * TILESIZE, 0, TILESIZE, TILESIZE))
-                scaled = pygame.transform.scale(original, (TILESIZE * self.scale, TILESIZE * self.scale))
-                flipped = pygame.transform.flip(scaled, 1, 0)
-                self.frames[state][0].append(scaled)
-                self.frames[state][1].append(flipped)
-
-
-    def initialize_image_and_rect(self, x, y):
+    def setup_sprite(self, x, y):
         current_state = self.fsm.get_state_str()
-        self.image = self.frames[current_state][self.direction][self.frame_idx]
-        self.rect = self.image.get_rect()
-        self.hitbox_rect = self.image.get_bounding_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.hitbox_rect.centerx = self.rect.centerx
-        self.hitbox_rect.bottom = self.rect.bottom
+        self.sprite.setup_sprite(x, y, current_state, self.direction)
 
 
     def register_keys(self, right, left, jump, run):
@@ -118,6 +97,7 @@ class Character(Entity):
         self.direction = 1
         self.vel_x = -HORIZONTAL_SPEED * self.scale
 
+
     def jump(self):
         self.vel_y = -VERTICAL_SPEED
 
@@ -132,44 +112,43 @@ class Character(Entity):
     def move_x(self):
         if self.running:
             self.vel_x *= 2
-        self.rect.x += self.vel_x
-        self.hitbox_rect.x += self.vel_x
+        self.sprite.rect.x += self.vel_x
+        self.sprite.hitbox_rect.x += self.vel_x
 
 
     def move_y(self):
-        self.rect.y += self.vel_y
-        self.hitbox_rect.y += self.vel_y
+        self.sprite.rect.y += self.vel_y
+        self.sprite.hitbox_rect.y += self.vel_y
 
     
     def collide_x(self, rect):        
         if self.vel_x > 0:
-            self.hitbox_rect.right = rect.left
+            self.sprite.hitbox_rect.right = rect.left
         else:
-            self.hitbox_rect.left = rect.right
-        self.rect.centerx = self.hitbox_rect.centerx
+            self.sprite.hitbox_rect.left = rect.right
+        self.sprite.rect.centerx = self.sprite.hitbox_rect.centerx
 
 
     def collide_y(self, rect):
         if self.vel_y < 0:
-            self.hitbox_rect.top = rect.bottom
+            self.sprite.hitbox_rect.top = rect.bottom
         else:
-            self.hitbox_rect.bottom = rect.top
+            self.sprite.hitbox_rect.bottom = rect.top
             self.fsm.update(Transition.ON_GROUND)
-        self.rect.bottom = self.hitbox_rect.bottom
+        self.sprite.rect.bottom = self.sprite.hitbox_rect.bottom
         self.vel_y = 0
 
 
-    def update_animation(self):
+    def update_sprite(self):
         current_time = pygame.time.get_ticks()
         current_state = self.fsm.get_state_str()
         if current_time - self.time > ANIMATION_COOLDOWN:
             self.time = current_time
-            self.frame_idx = (self.frame_idx + 1) % len(self.frames[current_state][self.direction])
-            self.image = self.frames[current_state][self.direction][self.frame_idx]
-    
+            self.sprite.update_image(current_state, self.direction)
+
 
     def on_update_game(self):
-        self.update_animation()
+        self.update_sprite()
         if self.vel_y > GRAVITY:
             self.fsm.update(Transition.JUMP, key=None)
         else:
@@ -180,10 +159,8 @@ class Character(Entity):
 
 
     def get_hitbox_rect(self):
-        return self.hitbox_rect
+        return self.sprite.hitbox_rect
     
 
     def draw(self, screen: pygame.Surface):
-        pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
-        pygame.draw.rect(screen, (0, 255, 0), self.hitbox_rect, 1)
-        screen.blit(self.image, self.rect)
+        self.sprite.draw(screen)

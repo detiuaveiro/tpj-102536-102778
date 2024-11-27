@@ -11,7 +11,7 @@ class FSM:
     def set_state(self, state: Enum) -> None:
         self.current_state = state
 
-    
+
     def get_state(self) -> Enum:
         return self.current_state
     
