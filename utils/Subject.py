@@ -118,5 +118,6 @@ class Subject(Observer, ABC):
             self.process_input()
             self.update_game()
             self.render()
+        print("Exiting game")
         pygame.quit()
         logging.shutdown()

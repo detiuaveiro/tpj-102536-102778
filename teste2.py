@@ -7,7 +7,7 @@ class Teste(Subject):
 
     def __init__(self):
         super().__init__()
-        self.fps = 10
+        self.fps = 90
         self.set_display_size(800, 600)
         self.menu = Menu(self)
         self.register_events(

@@ -255,9 +255,9 @@ class Menu(Entity):
             filetypes=(("json files", "*.json"),)
         )
         if file_path:
-            with open(file_path, "r") as file:
-                self.settings_ = json.load(file)
-                json.dump(self.settings_, open(FOLDER + "current.json", "w"))
+            with open(file_path, "r") as f1, open(FOLDER + "current.json", "w") as f2:
+                self.settings_ = json.load(f1)
+                json.dump(self.settings_, f2)
 
 
     def save_controls(self):
@@ -275,11 +275,10 @@ class Menu(Entity):
                 
 
     def controls(self):
-        print("Chosing bind")
         self.chosing_bind = True
 
     def change_bind(self, player, bind, new_key):
-        print(f"Changed {player} {bind} {new_key}")
         self.settings_[player][bind] = new_key
         self.chosing_bind = False
-        json.dump(self.settings_, open(FOLDER + "current.json", "w"))
+        with open(FOLDER + "current.json", "w") as file:
+            json.dump(self.settings_, file)
