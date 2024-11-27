@@ -18,6 +18,9 @@ class MenuSprite(Sprite):
         self.image = pygame.Surface((800, 600))
         self.image.fill("black")
         self.rect = self.image.get_rect()
+        # menu is 800x600 but the game is 1000x800
+        # centering the menu
+        self.rect.center = (500, 400)
         self.options: list[tuple[str, callable]] = [] # list of options
         self.selected: int = 0 # selected option
         self.positions: list[tuple[int, int]] = [] # positions of options
@@ -74,7 +77,7 @@ class HomeMenu(MenuSprite):
             ("Exit", menu.exit)
         ]
         self.mapping = [[0], [1], [2], [3]]
-        self.positions = [ (400, 150 + 70*i) for i in range(4) ]
+        self.positions = [ (400, 200 + 70*i) for i in range(4) ]
         self.draw_options()
 
 
@@ -91,7 +94,7 @@ class GameMenu(MenuSprite):
             ("Exit", menu.exit)
         ]
         self.mapping = [[0], [1], [2], [3], [4]]
-        self.positions = [ (400, 150 + 70*i) for i in range(5) ]
+        self.positions = [ (400, 170 + 70*i) for i in range(5) ]
         self.draw_options()
 
 
@@ -105,7 +108,7 @@ class LevelsMenu(MenuSprite):
             (level, lambda level=level: menu.level(int(level[-1]))) for level in self.levels
         ] + [("Back", menu.back)]
         self.mapping = [[i] for i in range(len(self.levels))] + [[len(self.levels)]]
-        self.positions = [ (400, 150 + 70 * i) for i in range(len(self.levels) + 1) ]
+        self.positions = [ (400, 200 + 70 * i) for i in range(len(self.levels) + 1) ]
         self.draw_options()
 
 
@@ -126,7 +129,7 @@ class SettingsMenu(MenuSprite):
             [12, 12]
         ]
 
-        self.positions = [ (250, 120), (550, 120) ] + [ (200, 230 + 50 * i) for i in range(5) ] + [ (600, 230 + 50 * i) for i in range(5) ] + [ (400, 520) ]
+        self.positions = [ (250, 130), (550, 130) ] + [ (200, 240 + 50 * i) for i in range(5) ] + [ (600, 240 + 50 * i) for i in range(5) ] + [ (400, 530) ]
         self.draw_options()
 
 
@@ -170,7 +173,7 @@ class SettingsMenu(MenuSprite):
 
     def draw_options(self):
         super().draw_options()
-        for i, pos in enumerate([(200, 180), (600, 180)]):
+        for i, pos in enumerate([(200, 190), (600, 190)]):
             text = pygame.font.Font(None, 36).render(f"Player {i + 1}", True, pygame.Color("white"))
             text_rect = text.get_rect(center=(pos[0], pos[1]))
             self.image.blit(text, text_rect)

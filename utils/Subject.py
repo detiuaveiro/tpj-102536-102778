@@ -119,5 +119,6 @@ class Subject(Observer, ABC):
             self.update_game()
             self.render()
         print("Exiting game")
+        pygame.joystick.quit()
         pygame.quit()
         logging.shutdown()

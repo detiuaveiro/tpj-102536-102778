@@ -8,7 +8,7 @@ class Teste(Subject):
     def __init__(self):
         super().__init__()
         self.fps = 90
-        self.set_display_size(800, 600)
+        self.set_display_size(1000, 800)
         self.menu = Menu(self)
         self.register_events(
             Event.KEY_DOWN,
@@ -33,10 +33,10 @@ class Teste(Subject):
     def draw(self):
         self.display.fill("white")
         text = pygame.font.SysFont(None, 50).render("Hello World", True, "black")
-        text_rect = text.get_rect(center=(400, 300))
+        text_rect = text.get_rect(center=(500, 400))
         self.display.blit(text, text_rect)
         level_text = pygame.font.SysFont(None, 50).render(f"Level: {self.level}", True, "black")
-        level_text_rect = level_text.get_rect(center=(400, 400))
+        level_text_rect = level_text.get_rect(center=(500, 600))
         self.display.blit(level_text, level_text_rect)
         self.menu.draw(self.display)
         
