@@ -31,7 +31,7 @@ class Teste(Subject):
 
 
     def draw(self):
-        self.display.fill("blue")
+        self.display.fill("white")
         text = pygame.font.SysFont(None, 50).render("Hello World", True, "black")
         text_rect = text.get_rect(center=(500, 400))
         self.display.blit(text, text_rect)

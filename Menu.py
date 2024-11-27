@@ -15,8 +15,7 @@ class MenuSprite(Sprite):
 
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((800, 600))
-        self.image.fill("black")
+        self.image = pygame.Surface((800, 600), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         self.rect.center = (500, 400)
         self.options: list[tuple[str, callable]] = [] # list of options
@@ -43,20 +42,33 @@ class MenuSprite(Sprite):
             self.draw_options()
 
 
+    def draw_text(self, text, size, pos, b):
+        font = pygame.font.Font(None, size)
+        text_color = pygame.Color("white")
+        border_color = pygame.Color("black")
+        text_ = font.render(text, True, text_color)
+        text_rect = text_.get_rect(center=pos)
+        for dx, dy in [(-b, 0), (b, 0), (0, -b), (0, b), (-b, -b), (-b, b), (b, -b), (b, b)]:
+            border = font.render(text, True, border_color)
+            border_rect = text_rect.copy()
+            border_rect.move_ip(dx, dy)
+            self.image.blit(border, border_rect)
+        self.image.blit(text_, text_rect)
+
+
     def draw_title(self):
-        title = pygame.font.Font(None, 72).render(self.title, True, pygame.Color("white"))
-        title_rect = title.get_rect(center=(400, 50))
-        self.image.blit(title, title_rect)
+        self.draw_text(self.title, 72, (400, 50), 3)
 
 
     def draw_options(self):
-        self.image.fill("black")
         self.draw_title()
         colors = ["white" if i != self.selected else "green" for i in range(len(self.options))]
         for option, color, pos in zip(self.options, colors, self.positions):
             text = pygame.font.Font(None, 36).render(option[0], True, pygame.Color(color))
             text_rect = text.get_rect(center=pos)
-            pygame.draw.rect(self.image, pygame.Color(color), (pos[0] - BOX_SIZE[0] // 2, pos[1] - BOX_SIZE[1] // 2, BOX_SIZE[0], BOX_SIZE[1]), 2)
+            box_rect = pygame.Rect(pos[0] - BOX_SIZE[0] // 2, pos[1] - BOX_SIZE[1] // 2, BOX_SIZE[0], BOX_SIZE[1])
+            pygame.draw.rect(self.image, pygame.Color("black"), box_rect)
+            pygame.draw.rect(self.image, pygame.Color(color), box_rect, 2)
             self.image.blit(text, text_rect)
 
 
@@ -173,10 +185,7 @@ class SettingsMenu(MenuSprite):
     def draw_options(self):
         super().draw_options()
         for i, pos in enumerate([(200, 190), (600, 190)]):
-            text = pygame.font.Font(None, 36).render(f"Player {i + 1}", True, pygame.Color("white"))
-            text_rect = text.get_rect(center=(pos[0], pos[1]))
-            self.image.blit(text, text_rect)
-
+            self.draw_text("Player " + str(i + 1), 36, pos, 2)
 
     def get_name(self, key):
         return pygame.key.name(key)
