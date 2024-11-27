@@ -8,6 +8,7 @@ from pathlib import Path
 from utils import Entity, Event, EventsQ
 
 FOLDER = "settings/"
+BOX_SIZE = (250, 50)
 
 
 class MenuSprite(Sprite):
@@ -53,6 +54,7 @@ class MenuSprite(Sprite):
         for option, color, pos in zip(self.options, colors, self.positions):
             text = pygame.font.Font(None, 36).render(option[0], True, pygame.Color(color))
             text_rect = text.get_rect(center=pos)
+            pygame.draw.rect(self.image, pygame.Color(color), (pos[0] - BOX_SIZE[0] // 2, pos[1] - BOX_SIZE[1] // 2, BOX_SIZE[0], BOX_SIZE[1]), 2)
             self.image.blit(text, text_rect)
 
 
@@ -72,7 +74,7 @@ class HomeMenu(MenuSprite):
             ("Exit", menu.exit)
         ]
         self.mapping = [[0], [1], [2], [3]]
-        self.positions = [ (400, 150), (400, 200), (400, 250), (400, 300) ]
+        self.positions = [ (400, 150 + 70*i) for i in range(4) ]
         self.draw_options()
 
 
@@ -89,7 +91,7 @@ class GameMenu(MenuSprite):
             ("Exit", menu.exit)
         ]
         self.mapping = [[0], [1], [2], [3], [4]]
-        self.positions = [ (400, 150), (400, 200), (400, 250), (400, 300), (400, 350) ]
+        self.positions = [ (400, 150 + 70*i) for i in range(5) ]
         self.draw_options()
 
 
@@ -103,7 +105,7 @@ class LevelsMenu(MenuSprite):
             (level, lambda level=level: menu.level(int(level[-1]))) for level in self.levels
         ] + [("Back", menu.back)]
         self.mapping = [[i] for i in range(len(self.levels))] + [[len(self.levels)]]
-        self.positions = [ (400, 150 + 50 * i) for i in range(len(self.levels) + 1) ]
+        self.positions = [ (400, 150 + 70 * i) for i in range(len(self.levels) + 1) ]
         self.draw_options()
 
 
@@ -124,7 +126,7 @@ class SettingsMenu(MenuSprite):
             [12, 12]
         ]
 
-        self.positions = [ (300, 100), (500, 100) ] + [ (200, 200 + 50 * i) for i in range(5) ] + [ (600, 200 + 50 * i) for i in range(5) ] + [ (400, 450) ]
+        self.positions = [ (250, 120), (550, 120) ] + [ (200, 230 + 50 * i) for i in range(5) ] + [ (600, 230 + 50 * i) for i in range(5) ] + [ (400, 520) ]
         self.draw_options()
 
 
@@ -168,7 +170,7 @@ class SettingsMenu(MenuSprite):
 
     def draw_options(self):
         super().draw_options()
-        for i, pos in enumerate([(200, 150), (600, 150)]):
+        for i, pos in enumerate([(200, 180), (600, 180)]):
             text = pygame.font.Font(None, 36).render(f"Player {i + 1}", True, pygame.Color("white"))
             text_rect = text.get_rect(center=(pos[0], pos[1]))
             self.image.blit(text, text_rect)
