@@ -2,9 +2,10 @@ import pygame
 from pathlib import Path
 from itertools import cycle
 
-TILESIZE = 32
+from game.consts import TILESIZE
 
-class CharacterSprite(pygame.sprite.Sprite):
+
+class Character(pygame.sprite.Sprite):
     def __init__(self, name, scale):
         super().__init__()
         self.scale = scale
@@ -20,7 +21,7 @@ class CharacterSprite(pygame.sprite.Sprite):
 
     
     def load_images(self):
-        spritesheet = Path(f'Game/assets/{self.name.replace(' ', '')}')
+        spritesheet = Path(f'assets/{self.name.replace(' ', '')}')
         files = [f for f in spritesheet.iterdir() if f.is_file() and not f.name.startswith('.')]
         for f in files:
             aux = f.name.split('_')

@@ -1,9 +1,9 @@
 import pygame
-from pathlib import Path
-from utils import Entity, Event, FSM
 from enum import Enum, auto
-from .CharacterSprite import CharacterSprite
-from Game.consts import SETTINGS
+
+from utils import Entity, Event, FSM
+from sprites import Character as CharacterSprite
+from game.consts import SETTINGS
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100

@@ -1,16 +1,7 @@
-import pygame
 
-from Game.Map import Map
-from Game.Character import Character
 from utils import Subject, Event, Locator
-from Game.Menu import Menu
-from .Fluid import Fluid
-from .Mechanism import Mechanism
-
-
-DISPLAY_W, DISPLAY_H = 960, 640
-SCALE = 2
-MAP_FOLDER = "Game/Maps/5"
+from entities import Character, Fluid, Mechanism, Menu, Map
+from game.consts import DISPLAY_W, DISPLAY_H, MAP_FOLDER, SCALE
 
 
 class Game(Subject):

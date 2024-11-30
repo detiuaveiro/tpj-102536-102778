@@ -1,6 +1,6 @@
 {
-    "background_image": "Game/assets/Backgrounds/4.png",
-    "tileset_image": "Game/assets/Tilesets/General.png",
+    "background_image": "assets/Backgrounds/4.png",
+    "tileset_image": "assets/Tilesets/General.png",
     "tileset_columns": 16,
     "tileset_rows": 8,
     "tile_size": 16,

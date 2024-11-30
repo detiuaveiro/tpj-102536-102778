@@ -2,9 +2,9 @@ import pygame
 import csv
 from pathlib import Path
 import json
-from .Tile import Tile
-from .Fluid import Fluid
-from .Mechanism import Mechanism
+
+from entities import Fluid, Mechanism
+from sprites import Tile
 from utils import Locator
 
 
