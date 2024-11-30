@@ -1,6 +1,6 @@
 import pygame
 
-from utils import Entity
+from utils import Entity, Event, Locator
 from sprites import Fluid as FluidSprite
 
 
@@ -10,14 +10,24 @@ class Fluid(Entity):
         self.fluid_type = fluid_type
         self.sprites_group = pygame.sprite.Group()
 
+        self.register_events(
+            Event.INTERACTION,
+        )
+
 
     def add(self, image, x, y):
         fluid = FluidSprite(image, x, y)
         self.sprites_group.add(fluid)
+        Locator.add_interactable(self, fluid.hitbox_rect)
 
 
     def get_rects(self):
         return [sprite.hitbox_rect for sprite in self.sprites_group]
+    
+
+    def on_interaction(self, uuid, player):
+        if self.id == uuid:
+            print(f"Fluid {self.fluid_type} interaction")
 
     
     def draw(self, screen):

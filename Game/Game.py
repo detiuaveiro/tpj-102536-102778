@@ -1,5 +1,5 @@
 
-from utils import Subject, Event, Locator
+from utils import Subject, Event, Locator, EventsQ
 from entities import Character, Fluid, Mechanism, Menu, Map
 from game.consts import DISPLAY_W, DISPLAY_H, MAP_FOLDER, SCALE
 
@@ -23,26 +23,17 @@ class Game(Subject):
         self.map_rects = self.map.get_rects()
         self.bg_img = self.map.get_bg(DISPLAY_W, DISPLAY_H)
 
-        # Players
-        self.player_1 = Character(1, x=800, y=200, scale=SCALE)
-        self.player_2 = Character(2, x=800, y=300, scale=SCALE)
-        self.players = [self.player_1, self.player_2]
-
-        # Fluids
-        self.water = Locator.get(Fluid)
-        self.lava = Locator.get(Fluid)
-
-        # Mechanisms
-        self.mechanisms = Locator.get(Mechanism)
+        Locator.add(Character(1, x=800, y=200, scale=SCALE))
+        Locator.add(Character(2, x=800, y=300, scale=SCALE))
     
 
     def on_update_game(self):
         self.move_players()
-        self.check_mechanisms()
+        self.check_interactables()
     
 
     def move_players(self):
-        for player in self.players:
+        for player in Locator.get(Character):
             player.move_x()
             self.collisions_x(player)
             player.move_y()
@@ -55,7 +46,7 @@ class Game(Subject):
         if rects_idx:
             return self.map_rects[rects_idx[0]]
         
-        barrier_rects = [r for m in self.mechanisms for r in m.get_barrier_rects()]
+        barrier_rects = [r for m in Locator.get(Mechanism) for r in m.get_barrier_rects()]
         rects_idx = hitbox_rect.collidelistall(barrier_rects)
         if rects_idx:
             return barrier_rects[rects_idx[0]]
@@ -73,27 +64,17 @@ class Game(Subject):
             player.collide_y(rect)
 
 
-    def check_mechanisms(self):
-        for mechanism in self.mechanisms:
-            trigger_rects = mechanism.get_trigger_rects()
-            if self.trigger_collision(trigger_rects):
-                mechanism.activate()
-            else:
-                mechanism.deactivate()
-
-
-    def trigger_collision(self, trigger_rects):
-        for player in self.players:
-            hitbox = player.get_hitbox_rect()
-            if hitbox.collidelistall(trigger_rects):
-                return True
-        return False
+    def check_interactables(self):
+        for player in Locator.get(Character):
+            for uuid, rect in Locator.get_interactables():
+                if player.get_hitbox_rect().colliderect(rect):
+                    EventsQ.add(Event.INTERACTION, uuid=uuid, player=player.num)
     
 
     def draw(self):
         self.display.blit(self.bg_img, (0, 0))
         self.map.draw(self.display)
-        for player in self.players:
+        for player in Locator.get(Character):
             player.draw(self.display)
         self.map.draw_fluids(self.display)
         self.menu.draw(self.display)

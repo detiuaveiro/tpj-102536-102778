@@ -24,9 +24,6 @@ class Map:
         self.lava = Fluid("lava")
         self.mechanisms = []
         self.tiles_group = pygame.sprite.Group()
-
-        Locator.add(Fluid, self.water)
-        Locator.add(Fluid, self.lava)
         
         self.load_metadata()
         self.load_tiles()
@@ -84,7 +81,7 @@ class Map:
             for barrier in data['barriers']:
                 mechanism.add_barrier(self.tiles[barrier['tile']], barrier['x'] * self.tile_size * self.scale, barrier['y'] * self.tile_size * self.scale)
             self.mechanisms.append(mechanism)
-            Locator.add(Mechanism, mechanism)
+            Locator.add(mechanism)
 
 
     def read_csv(self):

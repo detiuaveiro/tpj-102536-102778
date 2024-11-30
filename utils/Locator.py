@@ -1,31 +1,36 @@
+from uuid import UUID
+from pygame.rect import Rect
+
 from utils import Entity
 
 class Locator:
 
     _map: dict[type, list[Entity]] = {}
-    _all: list[Entity] = []
+    _interactables: list[tuple[UUID, Rect]] = []
 
     @staticmethod
-    def add(interface: type, entity: Entity) -> None:
-        if interface not in Locator._map:
-            Locator._map[interface] = []
-        Locator._map[interface].append(entity)
-        Locator._all.append(entity)
+    def add(entity: Entity) -> None:
+        type_ = entity.__class__
+        if type_ not in Locator._map:
+            Locator._map[type_] = []
+        Locator._map[type_].append(entity)
 
 
     @staticmethod
     def get(interface: type) -> list[Entity]:
         return Locator._map.get(interface, [])
     
-    
+
     @staticmethod
-    def get_all() -> list[Entity]:
-        return Locator._all
+    def add_interactable(entity: Entity, rect: Rect) -> None:
+        Locator._interactables.append((entity.id, rect))
+
+
+    @staticmethod
+    def get_interactables() -> list[tuple[UUID, Rect]]:
+        return Locator._interactables
     
 
     @staticmethod
-    def remove(entity: Entity) -> None:
-        for interface in Locator._map:
-            if entity in Locator._map[interface]:
-                Locator._map[interface].remove(entity)
-        Locator._all.remove(entity)
+    def clear_interactables() -> None:
+        Locator._interactables.clear()

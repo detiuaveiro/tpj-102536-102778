@@ -1,7 +1,6 @@
 from uuid import uuid4, UUID
-from pygame.sprite import Sprite
 
-from utils import Observer, FSM
+from utils import Observer
 
 
 class Entity(Observer):

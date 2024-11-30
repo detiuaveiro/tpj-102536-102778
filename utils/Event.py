@@ -1,16 +1,18 @@
 from enum import Enum, auto
 
-class Event(Enum):
+class Event(Enum):          # Arguments
 
     NEW_FRAME = auto()
     UPDATE_GAME = auto()
 
-    KEY_DOWN = auto()
-    KEY_UP = auto()
-    KEY_PRESSED = auto()
+    KEY_DOWN = auto()       # key
+    KEY_UP = auto()         # key
+    KEY_PRESSED = auto()    # key
 
-    NEW_LEVEL = auto()
-    LOAD_BINDS = auto()
+    NEW_LEVEL = auto()      # level
+    LOAD_BINDS = auto()     # binds
 
-    COLLISION_X = auto()
-    COLLISION_Y = auto()
+    COLLISION_X = auto()    # entity, rect
+    COLLISION_Y = auto()    # entity, rect
+    
+    INTERACTION = auto()      # uuid, player
