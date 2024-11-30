@@ -9,8 +9,6 @@ class Entity(Observer):
     def __init__(self):
         super().__init__()
         self.id: UUID = uuid4()
-        self.fsm: FSM = FSM()
-        self.sprite: Sprite = None
 
     def __eq__(self, other):
         if isinstance(other, Entity):
@@ -24,5 +22,3 @@ class Entity(Observer):
 
     def __str__(self):
         return f"{self.__class__.__name__}({self.id})"
-
-

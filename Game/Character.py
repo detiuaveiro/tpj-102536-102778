@@ -1,14 +1,16 @@
 import pygame
 from pathlib import Path
-from utils import Entity, Event
+from utils import Entity, Event, FSM
 from enum import Enum, auto
 from .CharacterSprite import CharacterSprite
+from Game.consts import SETTINGS
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100
 GRAVITY = 0.4
 HORIZONTAL_SPEED = 1
 VERTICAL_SPEED = 10
+PLAYERS = ['Pink Monster', 'Blue Monster']
 
 
 class Transition(Enum):
@@ -27,13 +29,12 @@ class States(Enum):
 
 class Character(Entity):
 
-    def __init__(self, name, x, y, scale):
+    def __init__(self, num, x, y, scale):
         super().__init__()
         self.time = pygame.time.get_ticks()
-        self.name = name
+        self.num = num
         self.scale = scale
-        self.sprite = CharacterSprite(name, scale)
-        self.key_mapping = {}
+        self.sprite = CharacterSprite(PLAYERS[num-1], scale)
         self.vel_x = 0
         self.vel_y = 0
         self.direction = 0
@@ -43,13 +44,28 @@ class Character(Entity):
             Event.KEY_PRESSED,
             Event.UPDATE_GAME
         )
+        self.register_paused_events(
+            Event.LOAD_BINDS
+        )
 
-        self.init_fsm()
+        self.setup_binds()
+        self.setup_fsm()
         self.setup_sprite(x, y)
 
+
+    def setup_binds(self, settings=SETTINGS):
+        self.binds = settings[self.num-1]
+        self.key_mapping = {
+            self.binds['right']: (Transition.MOVE, self.right),
+            self.binds['left']: (Transition.MOVE, self.left),
+            self.binds['jump']: (Transition.JUMP, self.jump),
+            self.binds['sprint']: (Transition.MOVE, self.run),
+            self.binds['use']: (Transition.MOVE, lambda: print('use'))
+        }
+
     
-    def init_fsm(self):
-        self.fsm.set_state(States.IDLE)
+    def setup_fsm(self):
+        self.fsm = FSM(States.IDLE)
         self.fsm.set_transitions(
             (Transition.JUMP, States.IDLE, States.JUMPING, self.move),
             (Transition.JUMP, States.RUNNING, States.JUMPING, self.move),
@@ -63,18 +79,13 @@ class Character(Entity):
         )
 
 
+    def on_paused_load_binds(self, binds):
+        self.setup_binds(binds)
+
+
     def setup_sprite(self, x, y):
         current_state = self.fsm.get_state_str()
         self.sprite.setup_sprite(x, y, current_state, self.direction)
-
-
-    def register_keys(self, right, left, jump, run):
-        self.key_mapping = {
-            right: (Transition.MOVE, self.right),
-            left: (Transition.MOVE, self.left),
-            jump: (Transition.JUMP, self.jump),
-            run: (Transition.MOVE, self.run)
-        }
 
 
     def run(self):

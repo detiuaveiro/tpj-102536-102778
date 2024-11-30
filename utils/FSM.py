@@ -3,13 +3,9 @@ from typing import Optional
 
 class FSM:
     
-    def __init__(self):
-        self.current_state: Optional[Enum] = None
+    def __init__(self, initial_state: Enum) -> None:
+        self.current_state: Enum = initial_state
         self.mapping: dict[Enum, dict[Enum, tuple[Enum, callable]]] = {} # {event: {state: (next_state, callback)}}
-
-
-    def set_state(self, state: Enum) -> None:
-        self.current_state = state
 
 
     def get_state(self) -> Enum:

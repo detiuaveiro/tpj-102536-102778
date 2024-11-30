@@ -10,6 +10,7 @@ class Event(Enum):
     KEY_PRESSED = auto()
 
     NEW_LEVEL = auto()
+    LOAD_BINDS = auto()
 
     COLLISION_X = auto()
     COLLISION_Y = auto()

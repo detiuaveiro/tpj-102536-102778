@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 from utils import Entity, Event, EventsQ
+from Game.consts import SETTINGS, SETTINGS_FOLDER
 
-FOLDER = "settings/"
 BOX_SIZE = (250, 50)
 
 
@@ -165,7 +165,7 @@ class SettingsMenu(MenuSprite):
         ]
 
 
-    def handle_key(self, key):
+    def handle_key(self, key, draw=True):
         bind = self.options[self.selected][0].split(":")[0]
         if self.menu.chosing_bind:
             player = 0 if self.selected < 6 else 1
@@ -204,7 +204,7 @@ class Menu(Entity):
         self.game = game
         self.menus = [HomeMenu(self)]
         self.chosing_bind = False
-        self.settings_ = json.load(open(FOLDER + "current.json")) if Path(FOLDER + "current.json").exists() else json.load(open(FOLDER + "default.json"))
+        self.settings_ = SETTINGS
 
 
     def on_paused_key_down(self, key):
@@ -261,14 +261,15 @@ class Menu(Entity):
         root.withdraw()
 
         file_path = filedialog.askopenfilename(
-            initialdir=FOLDER,
+            initialdir=SETTINGS_FOLDER,
             title="Select file",
             filetypes=(("json files", "*.json"),)
         )
         if file_path:
-            with open(file_path, "r") as f1, open(FOLDER + "current.json", "w") as f2:
+            with open(file_path, "r") as f1, open(SETTINGS_FOLDER + "current.json", "w") as f2:
                 self.settings_ = json.load(f1)
                 json.dump(self.settings_, f2)
+        EventsQ.add(Event.LOAD_BINDS, binds=self.settings_)
 
 
     def save_controls(self):
@@ -276,7 +277,7 @@ class Menu(Entity):
         root.withdraw()
 
         file_path = filedialog.asksaveasfilename(
-            initialdir=FOLDER,
+            initialdir=SETTINGS_FOLDER,
             title="Select file",
             filetypes=(("json files", "*.json"),)
         )
@@ -291,5 +292,6 @@ class Menu(Entity):
     def change_bind(self, player, bind, new_key):
         self.settings_[player][bind] = new_key
         self.chosing_bind = False
-        with open(FOLDER + "current.json", "w") as file:
+        with open(SETTINGS_FOLDER + "current.json", "w") as file:
             json.dump(self.settings_, file)
+        EventsQ.add(Event.LOAD_BINDS, binds=self.settings_)

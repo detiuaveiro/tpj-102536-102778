@@ -2,12 +2,15 @@ import pygame
 
 from Game.Map import Map
 from Game.Character import Character
-from utils import Subject, Event
+from utils import Subject, Event, Locator
 from Game.Menu import Menu
+from .Fluid import Fluid
+from .Mechanism import Mechanism
+
 
 DISPLAY_W, DISPLAY_H = 960, 640
 SCALE = 2
-MAP_FOLDER = "Game/Maps/2"
+MAP_FOLDER = "Game/Maps/5"
 
 
 class Game(Subject):
@@ -30,31 +33,22 @@ class Game(Subject):
         self.bg_img = self.map.get_bg(DISPLAY_W, DISPLAY_H)
 
         # Players
-        self.player_1 = Character('Pink Monster', x=800, y=200, scale=SCALE)
-        self.players = [self.player_1]
-        
-        self.player_1.register_keys(
-            right = pygame.K_RIGHT,
-            left = pygame.K_LEFT,
-            jump = pygame.K_UP,
-            run = pygame.K_LSHIFT
-        )
+        self.player_1 = Character(1, x=800, y=200, scale=SCALE)
+        self.player_2 = Character(2, x=800, y=300, scale=SCALE)
+        self.players = [self.player_1, self.player_2]
+
+        # Fluids
+        self.water = Locator.get(Fluid)
+        self.lava = Locator.get(Fluid)
+
+        # Mechanisms
+        self.mechanisms = Locator.get(Mechanism)
+    
 
     def on_update_game(self):
         self.move_players()
-
-
-    def draw(self):
-        self.display.blit(self.bg_img, (0, 0))
-        self.map.draw(self.display)
-        for player in self.players:
-            player.draw(self.display)
-        
-        text_fps = pygame.font.SysFont(None, 30).render(str(int(self.clock.get_fps())), True, "green")
-        self.display.blit(text_fps, (10, 10))
-        
-        self.menu.draw(self.display)
-
+        self.check_mechanisms()
+    
 
     def move_players(self):
         for player in self.players:
@@ -69,6 +63,12 @@ class Game(Subject):
         rects_idx = hitbox_rect.collidelistall(self.map_rects)
         if rects_idx:
             return self.map_rects[rects_idx[0]]
+        
+        barrier_rects = [r for m in self.mechanisms for r in m.get_barrier_rects()]
+        rects_idx = hitbox_rect.collidelistall(barrier_rects)
+        if rects_idx:
+            return barrier_rects[rects_idx[0]]
+        
         return None
     
 
@@ -80,3 +80,29 @@ class Game(Subject):
     def collisions_y(self, player):
         if rect := self.collision_rect(player):
             player.collide_y(rect)
+
+
+    def check_mechanisms(self):
+        for mechanism in self.mechanisms:
+            trigger_rects = mechanism.get_trigger_rects()
+            if self.trigger_collision(trigger_rects):
+                mechanism.activate()
+            else:
+                mechanism.deactivate()
+
+
+    def trigger_collision(self, trigger_rects):
+        for player in self.players:
+            hitbox = player.get_hitbox_rect()
+            if hitbox.collidelistall(trigger_rects):
+                return True
+        return False
+    
+
+    def draw(self):
+        self.display.blit(self.bg_img, (0, 0))
+        self.map.draw(self.display)
+        for player in self.players:
+            player.draw(self.display)
+        self.map.draw_fluids(self.display)
+        self.menu.draw(self.display)

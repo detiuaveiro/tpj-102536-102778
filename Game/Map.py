@@ -2,23 +2,10 @@ import pygame
 import csv
 from pathlib import Path
 import json
-
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self, image, x, y):
-        super().__init__()
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-
-
-    def draw(self, display: pygame.surface.Surface):
-        display.blit(self.image, self.rect)
-
-
-    def get_rect(self):
-        return self.rect
+from .Tile import Tile
+from .Fluid import Fluid
+from .Mechanism import Mechanism
+from utils import Locator
 
 
 class Map:
@@ -32,12 +19,19 @@ class Map:
         self.tileset_rows = None
         self.tile_size = None
         self.tiles = []
-        self.map_tiles = pygame.sprite.Group()
-        self.map_rects = []
+        self.tile_rects = []
+        self.water = Fluid("water")
+        self.lava = Fluid("lava")
+        self.mechanisms = []
+        self.tiles_group = pygame.sprite.Group()
+
+        Locator.add(Fluid, self.water)
+        Locator.add(Fluid, self.lava)
         
         self.load_metadata()
         self.load_tiles()
         self.load_map()
+        self.load_mechanisms()
 
 
     def load_metadata(self):
@@ -48,6 +42,9 @@ class Map:
             self.tileset_rows = map_metadata['tileset_rows']
             self.tile_size = map_metadata['tile_size']
             self.bg_img_path = map_metadata['background_image']
+            self.water_tiles = set(map_metadata['water_tiles'])
+            self.lava_tiles = set(map_metadata['lava_tiles'])
+            self.mechanisms_data = map_metadata['mechanisms']
 
 
     def load_tiles(self):
@@ -69,9 +66,25 @@ class Map:
             for x, tile in enumerate(row):
                 tile_idx = int(tile)
                 if tile_idx >= 0:
-                    tile_obj = Tile(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
-                    self.map_tiles.add(tile_obj)
-                    self.map_rects.append(tile_obj.get_rect())
+                    if tile_idx in self.lava_tiles:
+                        self.lava.add(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
+                    elif tile_idx in self.water_tiles:
+                        self.water.add(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
+                    else:
+                        tile_obj = Tile(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
+                        self.tiles_group.add(tile_obj)
+                        self.tile_rects.append(tile_obj.rect)
+
+
+    def load_mechanisms(self):
+        for data in self.mechanisms_data:
+            mechanism = Mechanism()
+            for trigger in data['triggers']:
+                mechanism.add_trigger(self.tiles[trigger['tile']], trigger['x'] * self.tile_size * self.scale, trigger['y'] * self.tile_size * self.scale)
+            for barrier in data['barriers']:
+                mechanism.add_barrier(self.tiles[barrier['tile']], barrier['x'] * self.tile_size * self.scale, barrier['y'] * self.tile_size * self.scale)
+            self.mechanisms.append(mechanism)
+            Locator.add(Mechanism, mechanism)
 
 
     def read_csv(self):
@@ -81,10 +94,10 @@ class Map:
             for row in reader:
                 map_details.append(row)
         return map_details
-    
+
 
     def get_rects(self):
-        return self.map_rects
+        return self.tile_rects
     
 
     def get_bg(self, width, height):
@@ -92,4 +105,11 @@ class Map:
 
 
     def draw(self, display: pygame.surface.Surface):
-        self.map_tiles.draw(display)
+        self.tiles_group.draw(display)
+        for mechanism in self.mechanisms:
+            mechanism.draw(display)
+
+
+    def draw_fluids(self, display: pygame.surface.Surface):
+        self.water.draw(display)
+        self.lava.draw(display)
