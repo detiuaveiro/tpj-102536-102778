@@ -23,7 +23,7 @@ class Game(Subject):
         self.map_rects = self.map.get_rects()
         self.bg_img = self.map.get_bg(DISPLAY_W, DISPLAY_H)
 
-        Locator.add(Character(1, x=800, y=200, scale=SCALE))
+        Locator.add(Character(1, x=800, y=100, scale=SCALE))
         Locator.add(Character(2, x=800, y=300, scale=SCALE))
     
 
@@ -34,10 +34,10 @@ class Game(Subject):
 
     def move_players(self):
         for player in Locator.get(Character):
-            player.move_x()
-            self.collisions_x(player)
             player.move_y()
             self.collisions_y(player)
+            player.move_x()
+            self.collisions_x(player)
 
 
     def collision_rect(self, player):

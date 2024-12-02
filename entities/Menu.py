@@ -1,11 +1,11 @@
 import pygame
-import tkinter as tk
 from tkinter import filedialog
 import json
 
 from utils import Entity, Event, EventsQ
 from sprites import HomeMenu, GameMenu, LevelsMenu, SettingsMenu
 from game.consts import SETTINGS, SETTINGS_FOLDER
+
 
 BOX_SIZE = (250, 50)
 
@@ -75,8 +75,6 @@ class Menu(Entity):
         self.game.running = False
 
     def load_controls(self):
-        root = tk.Tk()
-        root.withdraw()
 
         file_path = filedialog.askopenfilename(
             initialdir=SETTINGS_FOLDER,
@@ -91,8 +89,6 @@ class Menu(Entity):
 
 
     def save_controls(self):
-        root = tk.Tk()
-        root.withdraw()
 
         file_path = filedialog.asksaveasfilename(
             initialdir=SETTINGS_FOLDER,

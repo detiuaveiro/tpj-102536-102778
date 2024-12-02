@@ -3,6 +3,7 @@ from pygame import Surface
 from pygame.time import Clock
 import logging
 import json
+import tkinter as tk
 from abc import ABC, abstractmethod
 
 from utils import Event, Observer, EventsQ
@@ -11,6 +12,8 @@ class Subject(Observer, ABC):
 
     def __init__(self):
         Observer.__init__(self)
+        root = tk.Tk()
+        root.withdraw()
         pygame.init()
         self.fps: int = 60
         self.running: bool = True
