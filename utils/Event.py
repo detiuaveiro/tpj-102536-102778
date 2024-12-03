@@ -15,4 +15,6 @@ class Event(Enum):          # Arguments
     COLLISION_X = auto()    # entity, rect
     COLLISION_Y = auto()    # entity, rect
     
-    INTERACTION = auto()      # uuid, player
+    INTERACTION = auto()    # uuid, player
+
+    SCROLL = auto()         # pivot_uuid, limit, player_vel

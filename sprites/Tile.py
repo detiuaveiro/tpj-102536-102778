@@ -9,8 +9,5 @@ class Tile(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def draw(self, display: pygame.surface.Surface):
-        display.blit(self.image, self.rect)
-
     def get_rect(self):
         return self.rect

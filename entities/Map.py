@@ -110,3 +110,8 @@ class Map:
     def draw_fluids(self, display: pygame.surface.Surface):
         self.water.draw(display)
         self.lava.draw(display)
+    
+
+    def scroll(self, vel):
+        for tile in self.tiles_group:
+            tile.rect.y -= vel

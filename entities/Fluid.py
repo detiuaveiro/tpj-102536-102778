@@ -12,6 +12,7 @@ class Fluid(Entity):
 
         self.register_events(
             Event.INTERACTION,
+            Event.SCROLL
         )
 
 
@@ -29,6 +30,12 @@ class Fluid(Entity):
         if self.id == uuid:
             print(f"Fluid {self.fluid_type} interaction")
 
-    
+
+    def on_scroll(self, uuid, limit, vel):
+        for sprite in self.sprites_group:
+            sprite.rect.y -= vel
+            sprite.hitbox_rect.y -= vel
+
+
     def draw(self, screen):
         self.sprites_group.draw(screen)

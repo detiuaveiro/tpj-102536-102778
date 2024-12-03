@@ -2,7 +2,9 @@
 from utils import Subject, Event, Locator, EventsQ
 from entities import Character, Fluid, Mechanism, Menu, Map
 from game.consts import DISPLAY_W, DISPLAY_H, MAP_FOLDER, SCALE
+import pygame
 
+SCROLL_THRESHOLD = 32   # tile_size * scale
 
 class Game(Subject):
     
@@ -25,12 +27,13 @@ class Game(Subject):
 
         Locator.add(Character(1, x=150, y=150, scale=SCALE))
         Locator.add(Character(2, x=800, y=300, scale=SCALE))
-    
+
 
     def on_update_game(self):
         self.move_players()
+        self.scroll()
         self.check_interactables()
-    
+
 
     def move_players(self):
         for player in Locator.get(Character):
@@ -70,6 +73,20 @@ class Game(Subject):
                 if player.get_hitbox_rect().colliderect(rect):
                     EventsQ.add(Event.INTERACTION, uuid=uuid, player=player.num)
     
+
+    def scroll(self):
+        pivot_player = Locator.get(Character)[0]
+        hitbox = pivot_player.get_hitbox_rect()
+        _, vel_y = pivot_player.get_vel()
+
+        if hitbox.top < SCROLL_THRESHOLD and vel_y < 0:
+            EventsQ.add(Event.SCROLL, uuid=pivot_player.id, limit=SCROLL_THRESHOLD, vel=vel_y)
+            self.map.scroll(vel_y)
+
+        elif hitbox.bottom > DISPLAY_H - SCROLL_THRESHOLD and vel_y > 0:
+            EventsQ.add(Event.SCROLL, uuid=pivot_player.id, limit=DISPLAY_H - SCROLL_THRESHOLD, vel=vel_y)
+            self.map.scroll(vel_y)
+
 
     def draw(self):
         self.display.blit(self.bg_img, (0, 0))

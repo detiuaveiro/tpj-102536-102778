@@ -1,0 +1,10 @@
+{
+    "background_image": "assets/Backgrounds/4.png",
+    "tileset_image": "assets/Tilesets/General.png",
+    "tileset_columns": 16,
+    "tileset_rows": 8,
+    "tile_size": 16,
+    "water_tiles": [110, 111, 114, 115, 116, 117],
+    "lava_tiles": [112, 113, 118, 119],
+    "mechanisms": []
+}

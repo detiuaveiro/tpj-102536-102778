@@ -23,6 +23,3 @@ class Mechanism(pygame.sprite.Sprite):
 
     def deactivate_trigger(self):
         self.image = self.trigger_images[0]
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)

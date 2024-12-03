@@ -11,7 +11,3 @@ class Fluid(pygame.sprite.Sprite):
         self.rect.y = y
         self.hitbox_rect.centerx = self.rect.centerx
         self.hitbox_rect.bottom = self.rect.bottom
-
-
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
