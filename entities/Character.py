@@ -43,7 +43,6 @@ class Character(Entity):
         self.register_events(
             Event.KEY_PRESSED,
             Event.UPDATE_GAME,
-            Event.SCROLL
         )
         self.register_paused_events(
             Event.LOAD_BINDS
@@ -168,31 +167,6 @@ class Character(Entity):
         self.vel_y += GRAVITY
         self.vel_x = 0
         self.running = False
-
-
-    def on_scroll(self, uuid, limit, vel):
-        if vel < 0:
-            self.scroll_up(uuid, limit, vel)
-        else:
-            self.scroll_down(uuid, limit, vel)
-
-    
-    def scroll_up(self, uuid, limit, vel):
-        if self.id == uuid:
-            self.sprite.hitbox_rect.top = limit
-            self.sprite.rect.bottom = self.sprite.hitbox_rect.bottom
-        else:
-            self.sprite.rect.top -= vel
-            self.sprite.hitbox_rect.top -= vel
-
-    
-    def scroll_down(self, uuid, limit, vel):
-        if self.id == uuid:
-            self.sprite.hitbox_rect.bottom = limit
-            self.sprite.rect.bottom = self.sprite.hitbox_rect.bottom
-        else:
-            self.sprite.rect.bottom -= vel
-            self.sprite.hitbox_rect.bottom -= vel
 
 
     def get_hitbox_rect(self):

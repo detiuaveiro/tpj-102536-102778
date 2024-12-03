@@ -8,6 +8,7 @@ MAP_FOLDER = "maps/6"
 TILESIZE = 32
 MENU_BOX_SIZE = (250, 50)
 RESISTANCES = ["fire", "water"]  # player 1, player 2
+TRESHOLD = 200
 
 
 if Path(SETTINGS_FOLDER + "current.json").exists():

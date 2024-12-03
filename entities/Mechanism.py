@@ -13,7 +13,6 @@ class Mechanism(Entity):
         self.register_events(
             Event.UPDATE_GAME,
             Event.INTERACTION,
-            Event.SCROLL
         )
 
 
@@ -57,16 +56,6 @@ class Mechanism(Entity):
         if not self.active:
             return [sprite.hitbox_rect for sprite in self.barriers_group]
         return []
-    
-
-    def on_scroll(self, uuid, limit, vel):
-        for sprite in self.triggers_group:
-            sprite.rect.y -= vel
-            sprite.hitbox_rect.y -= vel
-
-        for sprite in self.barriers_group:
-            sprite.rect.y -= vel
-            sprite.hitbox_rect.y -= vel
 
 
     def draw(self, screen):

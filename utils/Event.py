@@ -10,11 +10,10 @@ class Event(Enum):          # Arguments
     KEY_PRESSED = auto()    # key
 
     NEW_LEVEL = auto()      # level
+    RESTART_LEVEL = auto()
     LOAD_BINDS = auto()     # binds
 
     COLLISION_X = auto()    # entity, rect
     COLLISION_Y = auto()    # entity, rect
     
     INTERACTION = auto()    # uuid, player
-
-    SCROLL = auto()         # pivot_uuid, limit, player_vel
