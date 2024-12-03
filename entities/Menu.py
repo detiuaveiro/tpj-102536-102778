@@ -54,6 +54,7 @@ class Menu(Entity):
 
     def restart(self):
         self.menus = []
+        EventsQ.add(Event.RESTART_LEVEL)
 
     def resume(self):
         self.menus = []
