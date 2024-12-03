@@ -23,46 +23,45 @@ class Teste(Subject):
 
     def __init__(self):
         super().__init__()
-        self.fps = 90
+        self.fps = 5
         self.set_display_size(1000, 800)
+        self.display_rect = self.display.get_rect()
         self.menu = Menu(self)
         self.register_events(
             Event.KEY_DOWN,
+            Event.UPDATE_GAME,
         )
         self.paused = True
         self.surface = pygame.Surface((900, 1500))
         self.surface_rect = self.surface.get_rect()
-        self.surface_rect.center = (500, 750)
-        self.display_rect = self.display.get_rect()
-        self.point = Point(500, 350)
-        self.offset = 0
-
+        self.surface_rect.center = self.display_rect.center
+        
+        self.point = Point(450, 800)
 
 
     def on_key_down(self, key):
         if key == pygame.K_DOWN:
             self.point.move_down(20)
-            self.offset += 20
-            if self.offset > 250:
-                self.surface_rect.y -= 20
-                self.offset -= 20
         elif key == pygame.K_UP:
             self.point.move_up(20)
-            self.offset -= 20
-            if self.offset < -150:
-                self.surface_rect.y += 20
-                self.offset += 20
-        print(self.offset)
 
+    
+    def on_update_game(self):
+        absolute_position = self.point.y + self.surface_rect.y
+        if absolute_position > 600:
+            self.surface_rect.y -= 30
+        elif absolute_position < 200:
+            self.surface_rect.y += 30
 
 
     def draw_box(self, surface):
-        pygame.draw.rect(surface, "black", (100, 100, 200, 200))
+        pygame.draw.rect(surface, "black", (100, 300, 200, 200))
 
 
     def draw(self):
         self.display.fill("white")
         self.surface.fill("blue")
+        pygame.draw.circle(self.surface, "black", (450, 750), 5)
         self.draw_box(self.surface)
         self.point.draw(self.surface)
         self.display.blit(self.surface, self.surface_rect)
