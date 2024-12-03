@@ -1,7 +1,7 @@
 import pygame
 
 from utils import Subject, Event
-# from entities import Menu
+from entities import Menu
 
 class Teste(Subject):
 
@@ -9,11 +9,11 @@ class Teste(Subject):
         super().__init__()
         self.fps = 90
         self.set_display_size(1000, 800)
-        # self.menu = Menu(self)
+        self.menu = Menu(self)
         self.register_events(
             Event.KEY_DOWN,
         )
-        self.paused = False
+        self.paused = True
         self.surface = pygame.Surface((900, 700))
         self.surface_rect = self.surface.get_rect()
         self.surface_rect.center = (500, 350)
@@ -40,7 +40,7 @@ class Teste(Subject):
         self.surface.fill("blue")
         self.draw_box(self.surface)
         self.display.blit(self.surface, self.surface_rect)
-        # self.menu.draw(self.display)
+        self.menu.draw(self.display)
 
         
 
