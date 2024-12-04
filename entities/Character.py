@@ -10,7 +10,7 @@ ANIMATION_COOLDOWN = 100
 GRAVITY = 0.4
 HORIZONTAL_SPEED = 1
 VERTICAL_SPEED = 10
-PLAYERS = ['Pink Monster', 'Blue Monster']
+PLAYERS = ['Fire Monster', 'Water Monster']
 
 
 class Transition(Enum):

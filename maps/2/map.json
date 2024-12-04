@@ -5,7 +5,7 @@
     "tile_size": 16,
     "map_rows": 35,
     "map_columns": 30,
-    "water_tiles": [110, 111, 114, 115, 116, 117],
+    "water_tiles": [111, 114, 115, 116, 117],
     "lava_tiles": [112, 113, 118, 119],
     "portal_tiles": [106, 110],
     "mechanisms": [
