@@ -13,8 +13,9 @@ class Transition(Entity):
         self.surface = pygame.Surface((DISPLAY_W, DISPLAY_H), pygame.SRCALPHA)
 
         self.register_events(
+            Event.NEW_LEVEL,
             Event.RESTART_LEVEL,
-            Event.UPDATE_GAME,
+            Event.UPDATE_GAME
         )
         self.register_paused_events(
             Event.NEW_LEVEL,
@@ -26,6 +27,10 @@ class Transition(Entity):
     def start(self):
         self.active = True
         self.radius = 0
+
+
+    def on_new_level(self, level):
+        self.start()
 
 
     def on_restart_level(self):

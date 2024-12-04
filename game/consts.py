@@ -4,7 +4,7 @@ from pathlib import Path
 SETTINGS_FOLDER = "settings/"
 DISPLAY_W, DISPLAY_H = 960, 640
 SCALE = 2
-MAP_FOLDER = "maps/3"
+MAP_FOLDER = "maps"
 TILESIZE = 32
 MENU_BOX_SIZE = (250, 50)
 RESISTANCES = ["lava", "water"]  # player 1, player 2

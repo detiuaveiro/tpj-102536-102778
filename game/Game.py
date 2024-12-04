@@ -11,7 +11,6 @@ class Game(Subject):
         self.fps = 60
         self.menu = Menu(self)
         self.paused = True
-        self.level = 1
 
         self.register_events(
             Event.UPDATE_GAME

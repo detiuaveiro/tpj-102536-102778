@@ -1,6 +1,6 @@
 import pygame
 
-from utils import Entity, Event, Locator
+from utils import Entity, Event, Locator, EventsQ
 from sprites import Portal as PortalSprite
 
 
@@ -10,6 +10,7 @@ class Portal(Entity):
         self.sprites_group = pygame.sprite.Group()
         self.players_in = [False, False]
         self.players_using = [False, False]
+        self.entered = False
 
         self.register_events(
             Event.UPDATE_GAME,
@@ -41,8 +42,9 @@ class Portal(Entity):
         if self.id == uuid:
             self.players_in[player - 1] = True
 
-            if all(self.players_in) and all(self.players_using):
-                print("Players are in the portal")
+            if all(self.players_in) and all(self.players_using) and not self.entered:
+                self.entered = True
+                EventsQ.add(Event.NEW_LEVEL, level=None)
 
     def draw(self, screen):
         self.sprites_group.draw(screen)

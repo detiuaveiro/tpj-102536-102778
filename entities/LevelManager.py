@@ -9,7 +9,7 @@ class LevelManager(Entity):
 
     def __init__(self):
         super().__init__()
-        self.level = 0
+        self.level = 1
         self.map = None
         self.map_width = None
         self.map_height = None
@@ -26,8 +26,8 @@ class LevelManager(Entity):
 
     def on_new_level(self, level):
         Locator.clear()
-        self.level = level
-        self.map = Map(MAP_FOLDER, scale=SCALE)
+        self.level = level if level else self.level + 1
+        self.map = Map(f"{MAP_FOLDER}/{self.level}", scale=SCALE)
         self.map_width, self.map_height = self.map.get_map_size()
         self.map_rects = self.map.get_rects()
         self.surface = pygame.Surface((DISPLAY_W, self.map_height))
