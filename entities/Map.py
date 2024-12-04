@@ -2,6 +2,7 @@ import pygame
 import csv
 from pathlib import Path
 import json
+import random
 
 from utils import Locator
 from entities import Fluid, Mechanism, Portal
@@ -20,6 +21,10 @@ class Map:
         self.tiles = []
         self.tile_rects = []
         self.tiles_group = pygame.sprite.Group()
+        self.total_decorations = 0
+        self.decoration_img = None
+        self.background_color = None
+        self.background = None
         self.water = Fluid("water")
         self.lava = Fluid("lava")
         self.portal = Portal()
@@ -29,6 +34,7 @@ class Map:
         self.load_metadata()
         self.load_tiles()
         self.load_map()
+        self.generate_background()
         self.load_mechanisms()
 
 
@@ -43,6 +49,9 @@ class Map:
             self.lava_tiles = set(map_metadata['lava_tiles'])
             self.portal_tiles = set(map_metadata['portal_tiles'])
             self.mechanisms_data = map_metadata['mechanisms']
+            self.decoration_img = map_metadata['decoration_image']
+            self.total_decorations = map_metadata['total_decorations']
+            self.background_color = map_metadata['background_color']
             self.map_size = (
                 map_metadata['map_columns'] * self.tile_size * self.scale,
                 map_metadata['map_rows'] * self.tile_size * self.scale
@@ -99,6 +108,20 @@ class Map:
             for row in reader:
                 map_details.append(row)
         return map_details
+    
+
+    def generate_background(self):
+        background = pygame.Surface(self.map_size)
+        background.fill(self.background_color)
+        decoration = pygame.image.load(self.decoration_img)
+        w, h = decoration.get_size()
+
+        for _ in range(self.total_decorations):
+            x = random.randint(0, self.map_size[0] - w)
+            y = random.randint(0, self.map_size[1] - h)
+            background.blit(decoration, (x, y))
+
+        self.background = background
 
 
     def get_rects(self):
@@ -114,6 +137,7 @@ class Map:
 
 
     def draw(self, display: pygame.surface.Surface):
+        display.blit(self.background, (0, 0))
         self.tiles_group.draw(display)
         self.portal.draw(display)
         for mechanism in self.mechanisms:

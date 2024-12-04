@@ -54,7 +54,6 @@ class LevelManager(Entity):
 
 
     def draw(self, display):
-        self.surface.fill((135, 200, 250))
         self.map.draw(self.surface)
         for player in Locator.get(Character):
             player.draw(self.surface)
