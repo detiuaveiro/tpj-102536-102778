@@ -3,27 +3,27 @@ import csv
 from pathlib import Path
 import json
 
-from entities import Fluid, Mechanism
-from sprites import Tile
 from utils import Locator
+from entities import Fluid, Mechanism, Character
+from sprites import Tile
 
 
 class Map:
     def __init__(self, map_folder, scale):
         self.path = Path(map_folder)
         self.scale = scale
-        self.bg_img_path = None
-        self.bg_img = None
+        self.map_size = None
         self.tileset_img = None
         self.tileset_cols = None
         self.tileset_rows = None
         self.tile_size = None
         self.tiles = []
         self.tile_rects = []
+        self.tiles_group = pygame.sprite.Group()
         self.water = Fluid("water")
         self.lava = Fluid("lava")
         self.mechanisms = []
-        self.tiles_group = pygame.sprite.Group()
+        self.players_start = []
         
         self.load_metadata()
         self.load_tiles()
@@ -38,10 +38,17 @@ class Map:
             self.tileset_cols = map_metadata['tileset_columns']
             self.tileset_rows = map_metadata['tileset_rows']
             self.tile_size = map_metadata['tile_size']
-            self.bg_img_path = map_metadata['background_image']
             self.water_tiles = set(map_metadata['water_tiles'])
             self.lava_tiles = set(map_metadata['lava_tiles'])
             self.mechanisms_data = map_metadata['mechanisms']
+            self.map_size = (
+                map_metadata['map_columns'] * self.tile_size * self.scale,
+                map_metadata['map_rows'] * self.tile_size * self.scale
+            )
+            for i, player in enumerate( map_metadata['players_start']):
+                x = player['x'] * self.tile_size * self.scale
+                y = player['y'] * self.tile_size * self.scale
+                self.players_start.append((x, y))
 
 
     def load_tiles(self):
@@ -54,10 +61,6 @@ class Map:
 
 
     def load_map(self):
-        # Load background
-        self.bg_img = pygame.image.load(self.bg_img_path)
-
-        # Load tiles
         map_details = self.read_csv()
         for y, row in enumerate(map_details):
             for x, tile in enumerate(row):
@@ -71,6 +74,7 @@ class Map:
                         tile_obj = Tile(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
                         self.tiles_group.add(tile_obj)
                         self.tile_rects.append(tile_obj.rect)
+                        Locator.add_collidable(tile_obj)
 
 
     def load_mechanisms(self):
@@ -81,7 +85,7 @@ class Map:
             for barrier in data['barriers']:
                 mechanism.add_barrier(self.tiles[barrier['tile']], barrier['x'] * self.tile_size * self.scale, barrier['y'] * self.tile_size * self.scale)
             self.mechanisms.append(mechanism)
-            Locator.add(mechanism)
+            Locator.add_collidable(mechanism)
 
 
     def read_csv(self):
@@ -97,8 +101,12 @@ class Map:
         return self.tile_rects
     
 
-    def get_bg(self, width, height):
-        return pygame.transform.scale(self.bg_img, (width, height))
+    def get_map_size(self):
+        return self.map_size
+    
+
+    def get_players_start(self):
+        return self.players_start
 
 
     def draw(self, display: pygame.surface.Surface):
@@ -110,8 +118,3 @@ class Map:
     def draw_fluids(self, display: pygame.surface.Surface):
         self.water.draw(display)
         self.lava.draw(display)
-    
-
-    def scroll(self, vel):
-        for tile in self.tiles_group:
-            tile.rect.y -= vel

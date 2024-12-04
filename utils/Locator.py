@@ -7,6 +7,7 @@ class Locator:
 
     _map: dict[type, list[Entity]] = {}
     _interactables: list[tuple[UUID, Rect]] = []
+    _collidables: list[Entity] = []
 
     @staticmethod
     def add(entity: Entity) -> None:
@@ -27,10 +28,23 @@ class Locator:
 
 
     @staticmethod
+    def add_collidable(entity: Entity) -> None:
+        Locator._collidables.append(entity)
+
+
+    @staticmethod
     def get_interactables() -> list[tuple[UUID, Rect]]:
         return Locator._interactables
     
 
     @staticmethod
-    def clear_interactables() -> None:
+    def get_collidables():
+        for entity in Locator._collidables:
+            for rect in entity.get_blocks():
+                yield rect
+    
+
+    @staticmethod
+    def clear() -> None:
         Locator._interactables.clear()
+        Locator._collidables.clear()

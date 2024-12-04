@@ -1,9 +1,9 @@
 import pygame
 from enum import Enum, auto
 
-from utils import Entity, Event, FSM
+from utils import Entity, Event, FSM, EventsQ
 from sprites import Character as CharacterSprite
-from game.consts import SETTINGS
+from game.consts import SETTINGS, DEATH_FRAMES
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100
@@ -18,6 +18,7 @@ class Transition(Enum):
     MOVE = auto()
     ON_GROUND = auto()
     DEFAULT = auto()
+    DIE = auto()
 
 
 class States(Enum):
@@ -38,14 +39,19 @@ class Character(Entity):
         self.vel_x = 0
         self.vel_y = 0
         self.direction = 0
+        self.on_portal = False
         self.running = False
+        self.frames_after_death = 0
 
         self.register_events(
             Event.KEY_PRESSED,
             Event.UPDATE_GAME,
+            Event.DEATH,
+            Event.RESET
         )
         self.register_paused_events(
-            Event.LOAD_BINDS
+            Event.LOAD_BINDS,
+            Event.RESET
         )
 
         self.setup_binds()
@@ -75,7 +81,10 @@ class Character(Entity):
             (Transition.ON_GROUND, States.JUMPING, States.IDLE, None),
             (Transition.DEFAULT, States.RUNNING, States.IDLE, None),
             (Transition.DEFAULT, States.IDLE, States.IDLE, None),
-            (Transition.DEFAULT, States.JUMPING, States.JUMPING, None)
+            (Transition.DEFAULT, States.JUMPING, States.JUMPING, None),
+            (Transition.DIE, States.IDLE, States.DEATH, None),
+            (Transition.DIE, States.RUNNING, States.DEATH, None),
+            (Transition.DIE, States.JUMPING, States.DEATH, None)
         )
 
 
@@ -167,6 +176,33 @@ class Character(Entity):
         self.vel_y += GRAVITY
         self.vel_x = 0
         self.running = False
+
+        if self.fsm.get_state() == States.DEATH:
+            self.frames_after_death += 1
+            if self.frames_after_death == DEATH_FRAMES:
+                self.fsm.update(Transition.DEFAULT)
+                EventsQ.add(Event.RESTART_LEVEL)
+
+    
+    def on_death(self, player):
+        if player == self.num:
+            self.fsm.update(Transition.DIE)
+
+    
+    def on_reset(self, player, x, y):
+        if self.num == player:
+            self.sprite = CharacterSprite(PLAYERS[self.num-1], self.scale)
+            self.setup_fsm()
+            self.setup_sprite(x, y)
+            self.direction = 0
+            self.vel_x = 0
+            self.vel_y = 0
+            self.running = False
+            self.frames_after_death = 0
+
+
+    def on_paused_reset(self, player, x, y):
+        self.on_reset(player, x, y)
 
 
     def get_hitbox_rect(self):

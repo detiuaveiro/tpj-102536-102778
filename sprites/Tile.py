@@ -11,3 +11,6 @@ class Tile(pygame.sprite.Sprite):
 
     def get_rect(self):
         return self.rect
+    
+    def get_blocks(self):
+        return [self.rect]

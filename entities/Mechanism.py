@@ -52,7 +52,7 @@ class Mechanism(Entity):
         return [sprite.hitbox_rect for sprite in self.triggers_group]
     
 
-    def get_barrier_rects(self):
+    def get_blocks(self):
         if not self.active:
             return [sprite.hitbox_rect for sprite in self.barriers_group]
         return []

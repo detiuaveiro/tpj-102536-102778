@@ -1,6 +1,6 @@
 import pygame
 
-from utils import Entity, Event, Locator
+from utils import Entity, Event, Locator, EventsQ
 from entities import Map, Character
 from game.consts import MAP_FOLDER, SCALE, DISPLAY_W, DISPLAY_H, TRESHOLD
 
@@ -11,8 +11,9 @@ class LevelManager(Entity):
         super().__init__()
         self.level = 0
         self.map = None
+        self.map_width = None
+        self.map_height = None
         self.map_rects = None
-        self.bg_img = None
         self.surface = None
         self.surface_rect = None
         self.on_new_level(self.level)
@@ -24,12 +25,17 @@ class LevelManager(Entity):
 
 
     def on_new_level(self, level):
+        Locator.clear()
         self.level = level
         self.map = Map(MAP_FOLDER, scale=SCALE)
+        self.map_width, self.map_height = self.map.get_map_size()
         self.map_rects = self.map.get_rects()
-        self.bg_img = self.map.get_bg(DISPLAY_W, DISPLAY_H)
-        self.surface = pygame.Surface((DISPLAY_W, 1500))
+        self.surface = pygame.Surface((DISPLAY_W, self.map_height))
         self.surface_rect = self.surface.get_rect()
+        self.surface_rect.y = DISPLAY_H - self.map_height
+
+        for i, (x, y) in enumerate(self.map.get_players_start()):
+            EventsQ.add(Event.RESET, player=i+1, x=x, y=y)
 
 
     def on_restart_level(self):
@@ -40,14 +46,15 @@ class LevelManager(Entity):
         pivot_player = Locator.get(Character)[0]
         hitbox = pivot_player.get_hitbox_rect()
         absolute_y = hitbox.y + self.surface_rect.y
-        if absolute_y < TRESHOLD - hitbox.h:
+
+        if absolute_y < TRESHOLD - hitbox.h and self.surface_rect.y < 0:
             self.surface_rect.y += abs(pivot_player.vel_y)
-        elif absolute_y > DISPLAY_H - TRESHOLD:
+        elif absolute_y > DISPLAY_H - TRESHOLD and self.surface_rect.y > DISPLAY_H - self.map_height:
             self.surface_rect.y -= abs(pivot_player.vel_y)
 
 
     def draw(self, display):
-        self.surface.fill("black")
+        self.surface.fill((135, 200, 250))
         self.map.draw(self.surface)
         for player in Locator.get(Character):
             player.draw(self.surface)

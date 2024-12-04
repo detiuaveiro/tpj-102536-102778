@@ -1,7 +1,8 @@
 import pygame
 
-from utils import Entity, Event, Locator
+from utils import Entity, Event, Locator, EventsQ
 from sprites import Fluid as FluidSprite
+from game.consts import RESISTANCES
 
 
 class Fluid(Entity):
@@ -26,8 +27,8 @@ class Fluid(Entity):
     
 
     def on_interaction(self, uuid, player):
-        if self.id == uuid:
-            print(f"Fluid {self.fluid_type} interaction")
+        if self.id == uuid and RESISTANCES[player-1] != self.fluid_type:
+            EventsQ.add(Event.DEATH, player=player)
 
 
     def draw(self, screen):

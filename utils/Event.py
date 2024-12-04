@@ -11,9 +11,11 @@ class Event(Enum):          # Arguments
 
     NEW_LEVEL = auto()      # level
     RESTART_LEVEL = auto()
+    RESET = auto()          # player, x, y
     LOAD_BINDS = auto()     # binds
 
     COLLISION_X = auto()    # entity, rect
     COLLISION_Y = auto()    # entity, rect
     
     INTERACTION = auto()    # uuid, player
+    DEATH = auto()          # player

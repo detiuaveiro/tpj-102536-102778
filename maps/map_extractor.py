@@ -65,7 +65,23 @@ def remove_mechanisms():
     return new_map
 
 
+def extract_players_pos():
+    players = {}
+    map_details = read_csv()
+    for y, row in enumerate(map_details):
+        for x, tile in enumerate(row):
+            tile_idx = int(tile)
+            if tile_idx == 0 or tile_idx == 1:
+                players[f"player_{tile_idx}"] = {
+                    "x": x,
+                    "y": y
+                }
+    return players
+
+
 if __name__ == "__main__":
+
+    # Extract Mechanisms
     mechanisms = extract_mechanisms()
     mechanisms = list(mechanisms.values())
     map_name = args.m.split('/')[-1].split('.')[0]
@@ -76,3 +92,8 @@ if __name__ == "__main__":
     with open(f"{map_name}_no_mechanisms.csv", 'w') as f:
         writer = csv.writer(f)
         writer.writerows(new_map)
+
+    # Extract Players Initial Position
+    players = extract_players_pos()
+    with open(f"{map_name}_players.json", 'w') as f:
+        json.dump(players, f, indent=4)

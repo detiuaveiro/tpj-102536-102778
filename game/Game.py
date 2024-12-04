@@ -1,17 +1,14 @@
 
 from utils import Subject, Event, Locator, EventsQ
-from entities import Character, Fluid, Mechanism, Menu, Map, LevelManager
-from game.consts import DISPLAY_W, DISPLAY_H, MAP_FOLDER, SCALE
-import pygame
-
-SCROLL_THRESHOLD = 32   # tile_size * scale
+from entities import Character, Mechanism, Menu, LevelManager
+from game.consts import DISPLAY_W, DISPLAY_H, SCALE
 
 class Game(Subject):
     
     def __init__(self):
         super().__init__()
         self.set_display_size(DISPLAY_W, DISPLAY_H)
-        self.fps = 90
+        self.fps = 60
         self.menu = Menu(self)
         self.paused = True
         self.level = 1
@@ -20,8 +17,8 @@ class Game(Subject):
             Event.UPDATE_GAME
         )
 
-        Locator.add(Character(1, x=150, y=150, scale=SCALE))
-        Locator.add(Character(2, x=800, y=300, scale=SCALE))
+        Locator.add(Character(1, x=0, y=0, scale=SCALE))
+        Locator.add(Character(2, x=0, y=0, scale=SCALE))
         self.level_manager = LevelManager()
 
 
@@ -40,16 +37,9 @@ class Game(Subject):
 
     def collision_rect(self, player):
         hitbox_rect = player.get_hitbox_rect()
-        rects_idx = hitbox_rect.collidelistall(self.level_manager.map_rects)
-        if rects_idx:
-            return self.level_manager.map_rects[rects_idx[0]]
-        
-        barrier_rects = [r for m in Locator.get(Mechanism) for r in m.get_barrier_rects()]
-        rects_idx = hitbox_rect.collidelistall(barrier_rects)
-        if rects_idx:
-            return barrier_rects[rects_idx[0]]
-        
-        return None
+        for rect in Locator.get_collidables():
+            if hitbox_rect.colliderect(rect):
+                return rect
     
 
     def collisions_x(self, player):
