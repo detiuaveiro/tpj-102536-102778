@@ -1,7 +1,0 @@
-{
-    "background_image": "Game/assets/Backgrounds/4.png",
-    "tileset_image": "Game/assets/Tilesets/BasicGreen.png",
-    "tileset_columns": 10,
-    "tileset_rows": 4,
-    "tile_size": 16
-}

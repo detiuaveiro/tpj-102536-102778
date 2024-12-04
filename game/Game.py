@@ -1,6 +1,6 @@
 
 from utils import Subject, Event, Locator, EventsQ
-from entities import Character, Mechanism, Menu, LevelManager
+from entities import Character, Mechanism, Menu, LevelManager, Transition
 from game.consts import DISPLAY_W, DISPLAY_H, SCALE
 
 class Game(Subject):
@@ -20,6 +20,7 @@ class Game(Subject):
         Locator.add(Character(1, x=0, y=0, scale=SCALE))
         Locator.add(Character(2, x=0, y=0, scale=SCALE))
         self.level_manager = LevelManager()
+        self.transition = Transition()
 
 
     def on_update_game(self):
@@ -62,3 +63,4 @@ class Game(Subject):
     def draw(self):
         self.level_manager.draw(self.display)
         self.menu.draw(self.display)
+        self.transition.draw(self.display)

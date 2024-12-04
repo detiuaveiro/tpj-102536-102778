@@ -19,3 +19,4 @@ class Event(Enum):          # Arguments
     
     INTERACTION = auto()    # uuid, player
     DEATH = auto()          # player
+    USE = auto()            # player

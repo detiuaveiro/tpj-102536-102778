@@ -4,7 +4,7 @@ from pathlib import Path
 import json
 
 from utils import Locator
-from entities import Fluid, Mechanism, Character
+from entities import Fluid, Mechanism, Portal
 from sprites import Tile
 
 
@@ -22,6 +22,7 @@ class Map:
         self.tiles_group = pygame.sprite.Group()
         self.water = Fluid("water")
         self.lava = Fluid("lava")
+        self.portal = Portal()
         self.mechanisms = []
         self.players_start = []
         
@@ -40,6 +41,7 @@ class Map:
             self.tile_size = map_metadata['tile_size']
             self.water_tiles = set(map_metadata['water_tiles'])
             self.lava_tiles = set(map_metadata['lava_tiles'])
+            self.portal_tiles = set(map_metadata['portal_tiles'])
             self.mechanisms_data = map_metadata['mechanisms']
             self.map_size = (
                 map_metadata['map_columns'] * self.tile_size * self.scale,
@@ -70,6 +72,8 @@ class Map:
                         self.lava.add(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
                     elif tile_idx in self.water_tiles:
                         self.water.add(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
+                    elif tile_idx in self.portal_tiles:
+                        self.portal.add(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
                     else:
                         tile_obj = Tile(self.tiles[tile_idx], x * self.tile_size * self.scale, y * self.tile_size * self.scale)
                         self.tiles_group.add(tile_obj)
@@ -111,6 +115,7 @@ class Map:
 
     def draw(self, display: pygame.surface.Surface):
         self.tiles_group.draw(display)
+        self.portal.draw(display)
         for mechanism in self.mechanisms:
             mechanism.draw(display)
 

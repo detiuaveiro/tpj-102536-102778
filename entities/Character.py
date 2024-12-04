@@ -19,6 +19,7 @@ class Transition(Enum):
     ON_GROUND = auto()
     DEFAULT = auto()
     DIE = auto()
+    USE = auto()
 
 
 class States(Enum):
@@ -26,6 +27,7 @@ class States(Enum):
     JUMPING = 'jumping'
     DEATH = 'death'
     RUNNING = 'running'
+    USING = 'using'
 
 
 class Character(Entity):
@@ -66,7 +68,7 @@ class Character(Entity):
             self.binds['left']: (Transition.MOVE, self.left),
             self.binds['jump']: (Transition.JUMP, self.jump),
             self.binds['sprint']: (Transition.MOVE, self.run),
-            self.binds['use']: (Transition.MOVE, lambda: print('use'))
+            self.binds['use']: (Transition.USE, self.use)
         }
 
     
@@ -84,7 +86,9 @@ class Character(Entity):
             (Transition.DEFAULT, States.JUMPING, States.JUMPING, None),
             (Transition.DIE, States.IDLE, States.DEATH, None),
             (Transition.DIE, States.RUNNING, States.DEATH, None),
-            (Transition.DIE, States.JUMPING, States.DEATH, None)
+            (Transition.DIE, States.JUMPING, States.DEATH, None),
+            (Transition.USE, States.IDLE, States.USING, self.move),
+            (Transition.DEFAULT, States.USING, States.IDLE, None)
         )
 
 
@@ -106,6 +110,10 @@ class Character(Entity):
             return
         _, action = self.key_mapping[key]
         action()
+
+
+    def use(self):
+        EventsQ.add(Event.USE, player=self.num)
 
     
     def right(self):
