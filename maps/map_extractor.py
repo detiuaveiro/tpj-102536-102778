@@ -71,8 +71,8 @@ def extract_players_pos():
     for y, row in enumerate(map_details):
         for x, tile in enumerate(row):
             tile_idx = int(tile)
-            if tile_idx == 0 or tile_idx == 1:
-                players[f"player_{tile_idx}"] = {
+            if tile_idx == 126 or tile_idx == 127:
+                players[f"player_{tile_idx-126}"] = {
                     "x": x,
                     "y": y
                 }

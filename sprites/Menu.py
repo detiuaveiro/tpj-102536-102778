@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-from game.consts import MENU_BOX_SIZE
+from game.consts import MENU_BOX_SIZE, DISPLAY_W, DISPLAY_H
 
 
 class MenuSprite(Sprite):
@@ -10,7 +10,7 @@ class MenuSprite(Sprite):
         super().__init__()
         self.image = pygame.Surface((800, 600), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
-        self.rect.center = (500, 350)
+        self.rect.center = (DISPLAY_W // 2, DISPLAY_H // 2)
         self.options: list[tuple[str, callable]] = [] # list of options
         self.selected: int = 0 # selected option
         self.positions: list[tuple[int, int]] = [] # positions of options
@@ -181,4 +181,13 @@ class SettingsMenu(MenuSprite):
             self.draw_text("Player " + str(i + 1), 36, pos, 2)
 
     def get_name(self, key):
-        return pygame.key.name(key)
+        if isinstance(key, int):
+            return pygame.key.name(key)
+        mappings = {
+            "0_b_0": "A",
+            "0_b_2": "X",
+            "0_b_3": "Y",
+            "0_a_0_1": "Lleft",
+            "0_a_0_-1": "Lright",
+        }
+        return mappings.get(key[3:], key)

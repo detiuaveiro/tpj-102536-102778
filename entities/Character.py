@@ -1,9 +1,9 @@
 import pygame
 from enum import Enum, auto
 
-from utils import Entity, Event, FSM, EventsQ
+from utils import Entity, Event, FSM, EventsQ, Sound
 from sprites import Character as CharacterSprite
-from game.consts import SETTINGS, DEATH_FRAMES
+from game.consts import SETTINGS, DEATH_FRAMES, DISPLAY_W
 
 TILESIZE = 32
 ANIMATION_COOLDOWN = 100
@@ -40,7 +40,7 @@ class Character(Entity):
         self.sprite = CharacterSprite(PLAYERS[num-1], scale)
         self.vel_x = 0
         self.vel_y = 0
-        self.direction = 0
+        self.direction = 0 if x < DISPLAY_W/2 else 1
         self.on_portal = False
         self.running = False
         self.frames_after_death = 0
@@ -84,9 +84,9 @@ class Character(Entity):
             (Transition.DEFAULT, States.RUNNING, States.IDLE, None),
             (Transition.DEFAULT, States.IDLE, States.IDLE, None),
             (Transition.DEFAULT, States.JUMPING, States.JUMPING, None),
-            (Transition.DIE, States.IDLE, States.DEATH, None),
-            (Transition.DIE, States.RUNNING, States.DEATH, None),
-            (Transition.DIE, States.JUMPING, States.DEATH, None),
+            (Transition.DIE, States.IDLE, States.DEATH, self.die),
+            (Transition.DIE, States.RUNNING, States.DEATH, self.die),
+            (Transition.DIE, States.JUMPING, States.DEATH, self.die),
             (Transition.USE, States.IDLE, States.USING, self.move),
             (Transition.DEFAULT, States.USING, States.IDLE, None)
         )
@@ -128,6 +128,11 @@ class Character(Entity):
 
     def jump(self):
         self.vel_y = -VERTICAL_SPEED
+        Sound.play_sound("jump")
+
+    
+    def die(self):
+        Sound.play_sound("die")
 
 
     def on_key_pressed(self, key):
@@ -201,8 +206,8 @@ class Character(Entity):
         if self.num == player:
             self.sprite = CharacterSprite(PLAYERS[self.num-1], self.scale)
             self.setup_fsm()
+            self.direction = 0 if x < DISPLAY_W/2 else 1
             self.setup_sprite(x, y)
-            self.direction = 0
             self.vel_x = 0
             self.vel_y = 0
             self.running = False

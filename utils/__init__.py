@@ -5,3 +5,4 @@ from .Subject import Subject
 from .FSM import FSM
 from .Entity import Entity
 from .Locator import Locator
+from .Sound import Sound

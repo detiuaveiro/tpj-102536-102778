@@ -1,0 +1,98 @@
+{
+    "map_rows": 35,
+    "map_columns": 30,
+    "background_color": [135, 200, 250],
+    "decoration_image": "assets/Decorations/Cloud.png",
+    "total_decorations": 10,
+    "tileset_image": "assets/Tilesets/General.png",
+    "tileset_columns": 16,
+    "tileset_rows": 8,
+    "tile_size": 16,
+    "water_tiles": [111, 114, 115, 116, 117],
+    "lava_tiles": [112, 113, 118, 119],
+    "portal_tiles": [106, 110],
+    "players_start": [
+        {
+            "x": 2,
+            "y": 29
+        },
+        {
+            "x": 4,
+            "y": 29
+        }
+    ],
+    "mechanisms": [
+        {
+            "triggers": [
+                {
+                    "tile": 120,
+                    "x": 6,
+                    "y": 13
+                }
+            ],
+            "barriers": [
+                {
+                    "tile": 122,
+                    "x": 13,
+                    "y": 7
+                },
+                {
+                    "tile": 122,
+                    "x": 14,
+                    "y": 7
+                },
+                {
+                    "tile": 122,
+                    "x": 15,
+                    "y": 7
+                }
+            ]
+        },
+        {
+            "triggers": [
+                {
+                    "tile": 123,
+                    "x": 1,
+                    "y": 10
+                },
+                {
+                    "tile": 123,
+                    "x": 27,
+                    "y": 13
+                }
+            ],
+            "barriers": [
+                {
+                    "tile": 125,
+                    "x": 8,
+                    "y": 11
+                },
+                {
+                    "tile": 125,
+                    "x": 9,
+                    "y": 11
+                },
+                {
+                    "tile": 125,
+                    "x": 10,
+                    "y": 11
+                },
+                {
+                    "tile": 125,
+                    "x": 15,
+                    "y": 11
+                },
+                {
+                    "tile": 125,
+                    "x": 16,
+                    "y": 11
+                },
+                {
+                    "tile": 125,
+                    "x": 17,
+                    "y": 11
+                }
+            ]
+        }
+    ]
+}

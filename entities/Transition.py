@@ -1,6 +1,6 @@
 import pygame
 
-from utils import Entity, Event
+from utils import Entity, Event, Sound
 from game.consts import DISPLAY_W, DISPLAY_H
 
 
@@ -27,6 +27,7 @@ class Transition(Entity):
     def start(self):
         self.active = True
         self.radius = 0
+        Sound.play_sound('transition')
 
 
     def on_new_level(self, level):

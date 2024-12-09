@@ -1,7 +1,8 @@
 import pygame
 
 from utils import Entity, Event, Locator, EventsQ
-from entities import Map, Character
+from entities import Character
+from game.Map import Map
 from game.consts import MAP_FOLDER, SCALE, DISPLAY_W, DISPLAY_H, TRESHOLD
 
 
@@ -9,7 +10,7 @@ class LevelManager(Entity):
 
     def __init__(self):
         super().__init__()
-        self.level = 1
+        self.level = 0
         self.map = None
         self.map_width = None
         self.map_height = None
@@ -26,7 +27,7 @@ class LevelManager(Entity):
 
     def on_new_level(self, level):
         Locator.clear()
-        self.level = level if level else self.level + 1
+        self.level = level if level is not None else (self.level + 1) % 4 
         self.map = Map(f"{MAP_FOLDER}/{self.level}", scale=SCALE)
         self.map_width, self.map_height = self.map.get_map_size()
         self.map_rects = self.map.get_rects()

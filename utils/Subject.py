@@ -59,7 +59,10 @@ class Subject(Observer, ABC):
                 EventsQ.add(Event.KEY_UP, key=event.key)
                 self.keys_down.remove(event.key)
                 
-        all_keys = list(self.keys_down) + self.process_joysticks()
+        js_keys = self.process_joysticks()
+        for key in js_keys:
+            EventsQ.add(Event.KEY_DOWN, key=key)
+        all_keys = list(self.keys_down) + js_keys
         if all_keys:
             self.log(Event.KEY_PRESSED, keys=all_keys)
             for key in all_keys:

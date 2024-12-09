@@ -51,6 +51,7 @@ class Menu(Entity):
 
     def start(self):
         self.menus = []
+        EventsQ.add(Event.NEW_LEVEL, level=1)
 
     def restart(self):
         self.menus = []
@@ -103,6 +104,7 @@ class Menu(Entity):
 
     def controls(self):
         self.chosing_bind = True
+
 
     def change_bind(self, player, bind, new_key):
         self.settings_[player][bind] = new_key
