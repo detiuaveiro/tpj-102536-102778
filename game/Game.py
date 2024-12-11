@@ -1,6 +1,6 @@
 
 from utils import Subject, Event, Locator, EventsQ
-from entities import Character, Mechanism, Menu, LevelManager, Transition
+from entities import Character, Menu, LevelManager, Transition
 from game.consts import DISPLAY_W, DISPLAY_H, SCALE
 
 class Game(Subject):

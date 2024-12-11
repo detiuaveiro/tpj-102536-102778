@@ -4,8 +4,17 @@ from utils import Observer
 
 
 class Entity(Observer):
+    """
+    Base class for all entities that interact with the game.
+    """
 
     def __init__(self):
+        """
+        Attributes
+        ----------
+        id (UUID): 
+            Unique identifier for the entity.
+        """
         super().__init__()
         self.id: UUID = uuid4()
 

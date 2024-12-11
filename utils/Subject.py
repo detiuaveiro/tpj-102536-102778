@@ -9,8 +9,29 @@ from abc import ABC, abstractmethod
 from utils import Event, Observer, EventsQ
 
 class Subject(Observer, ABC):
+    """
+    Base class for the game loop and to notify observers of events.
+    """
 
     def __init__(self):
+        """
+        Attributes
+        ----------
+        fps (int):
+            Frames per second for the game.
+        running (bool):
+            Flag to keep the game running.
+        paused (bool):
+            Flag to pause the game.
+        display (Surface):
+            Display surface for the game.
+        clock (Clock):
+            Clock to keep track of the game time.
+        frame (int):
+            Frame number of the game.
+        logs (list[dict]):
+            List of logs for the game.
+        """
         Observer.__init__(self)
         root = tk.Tk()
         root.withdraw()
@@ -40,14 +61,30 @@ class Subject(Observer, ABC):
 
     @abstractmethod
     def draw(self) -> None:
+        """
+        Abstract method to draw the game.
+        """
         pass
 
 
     def set_display_size(self, width: int, height: int) -> None:
+        """
+        Set the display size for the game.
+
+        Parameters
+        ----------
+        width (int):
+            Width of the display.
+        height (int):
+            Height of the display.
+        """
         self.display = pygame.display.set_mode((width, height))
 
 
     def process_input(self) -> None:
+        """
+        Process input events for the game, adding them to the queue.
+        """
         EventsQ.add(Event.NEW_FRAME)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -71,6 +108,14 @@ class Subject(Observer, ABC):
 
 
     def process_joysticks(self) -> list[str]:
+        """
+        Process joystick events for the game.
+
+        Returns
+        -------
+        list[str]:
+            List of keys pressed in the joysticks.
+        """
         keys = []
         for id, joystick in enumerate(self.joysticks):
             for i in range(joystick.get_numbuttons()):
@@ -95,6 +140,16 @@ class Subject(Observer, ABC):
 
 
     def log(self, event: Event, **kwargs) -> None:
+        """
+        Log an event with its arguments.
+
+        Parameters
+        ----------
+        event (Event):
+            Event to be logged.
+        kwargs (dict):
+            Arguments for the event.
+        """
         msg = json.dumps({
             "frame": self.frame,
             "event": event.name,
@@ -105,6 +160,9 @@ class Subject(Observer, ABC):
 
 
     def update_game(self) -> None:
+        """
+        Notify observers of events.
+        """
         EventsQ.add(Event.UPDATE_GAME)
         for event, kwargs in EventsQ.get():
             if self.paused:
@@ -114,12 +172,18 @@ class Subject(Observer, ABC):
                 
 
     def render(self) -> None:
+        """
+        Render the game.
+        """
         self.draw()
         pygame.display.flip()
         self.clock.tick(self.fps)
 
 
     def run(self) -> None:
+        """
+        Run the game loop.
+        """
         while self.running:
             self.process_input()
             self.update_game()

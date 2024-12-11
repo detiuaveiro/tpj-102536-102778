@@ -1,6 +1,9 @@
 from enum import Enum, auto
 
 class Event(Enum):          # Arguments
+    """
+    Events that can be triggered by the game.
+    """
 
     NEW_FRAME = auto()
     UPDATE_GAME = auto()
