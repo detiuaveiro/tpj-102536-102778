@@ -7,6 +7,9 @@ from game.consts import MAP_FOLDER, SCALE, DISPLAY_W, DISPLAY_H, TRESHOLD
 
 
 class LevelManager(Entity):
+    """
+    Class that manages the levels of the game and the scrolling of the map.
+    """
 
     def __init__(self):
         super().__init__()
@@ -26,6 +29,15 @@ class LevelManager(Entity):
 
 
     def on_new_level(self, level):
+        """
+        Load a new level.
+        It clears the Locator, loads the map and resets the players.
+
+        Parameters
+        ----------
+        level (int):
+            Level to be loaded
+        """
         Locator.clear()
         self.level = level if level is not None else (self.level + 1) % 4 
         self.map = Map(f"{MAP_FOLDER}/{self.level}", scale=SCALE)
@@ -40,10 +52,17 @@ class LevelManager(Entity):
 
 
     def on_restart_level(self):
+        """
+        Restart the current level.
+        """
         self.on_new_level(self.level)
 
 
     def on_update_game(self):
+        """
+        Update the level manager.
+        It checks if the player is near the borders of the screen and scrolls the map.
+        """
         pivot_player = Locator.get(Character)[0]
         hitbox = pivot_player.get_hitbox_rect()
         absolute_y = hitbox.y + self.surface_rect.y
@@ -55,6 +74,9 @@ class LevelManager(Entity):
 
 
     def draw(self, display):
+        """
+        Draw the level in the display.
+        """
         self.map.draw(self.surface)
         for player in Locator.get(Character):
             player.draw(self.surface)
