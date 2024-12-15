@@ -2,13 +2,13 @@ import pygame
 from pathlib import Path
 from itertools import cycle
 
-from game.consts import TILESIZE
+from game.consts import TILESIZE, SCALE, ASSETS_FOLDER
 
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, name, scale):
+
+    def __init__(self, name):
         super().__init__()
-        self.scale = scale
         self.name = name
         self.frames = {}
         self.frames_cycles = {}
@@ -21,17 +21,19 @@ class Character(pygame.sprite.Sprite):
 
     
     def load_images(self):
-        spritesheet = Path(f'assets/{self.name.replace(' ', '')}')
+        spritesheet = Path(f'{ASSETS_FOLDER}/{self.name.replace(' ', '')}')
         files = [f for f in spritesheet.iterdir() if f.is_file() and not f.name.startswith('.')]
+
         for f in files:
             aux = f.name.split('_')
             state = aux[0].lower()
             n_sprites = int(aux[-1].split('.')[0])
             spritesheet = pygame.image.load(f)
             self.frames[state] = [[], []]
+            
             for i in range(n_sprites):
                 original = pygame.Surface.subsurface(spritesheet, (i * TILESIZE, 0, TILESIZE, TILESIZE))
-                scaled = pygame.transform.scale(original, (TILESIZE * self.scale, TILESIZE * self.scale))
+                scaled = pygame.transform.scale(original, (TILESIZE * SCALE, TILESIZE * SCALE))
                 flipped = pygame.transform.flip(scaled, 1, 0)
                 self.frames[state][0].append(scaled)
                 self.frames[state][1].append(flipped)
@@ -58,5 +60,3 @@ class Character(pygame.sprite.Sprite):
     
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
-        # pygame.draw.rect(screen, (255, 0, 0), self.rect, 1)
-        # pygame.draw.rect(screen, (0, 255, 0), self.hitbox_rect, 1)

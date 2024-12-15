@@ -5,6 +5,7 @@ from sprites import Portal as PortalSprite
 
 
 class Portal(Entity):
+    
     def __init__(self):
         super().__init__()
         self.sprites_group = pygame.sprite.Group()
@@ -32,10 +33,6 @@ class Portal(Entity):
 
     def on_use(self, player):
         self.players_using[player - 1] = True
-
-
-    def get_rects(self):
-        return [sprite.rect for sprite in self.sprites_group]
     
 
     def on_interaction(self, uuid, player):
@@ -45,6 +42,11 @@ class Portal(Entity):
             if all(self.players_in) and all(self.players_using) and not self.entered:
                 self.entered = True
                 EventsQ.add(Event.NEW_LEVEL, level=None)
+
+
+    def get_rects(self):
+        return [sprite.rect for sprite in self.sprites_group]
+
 
     def draw(self, screen):
         self.sprites_group.draw(screen)

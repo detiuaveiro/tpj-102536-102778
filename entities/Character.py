@@ -3,14 +3,10 @@ from enum import Enum, auto
 
 from utils import Entity, Event, FSM, EventsQ, Sound
 from sprites import Character as CharacterSprite
-from game.consts import SETTINGS, DEATH_FRAMES, DISPLAY_W
-
-TILESIZE = 32
-ANIMATION_COOLDOWN = 100
-GRAVITY = 0.4
-HORIZONTAL_SPEED = 1
-VERTICAL_SPEED = 10
-PLAYERS = ['Fire Monster', 'Water Monster']
+from game.consts import (
+    SETTINGS, DEATH_FRAMES, DISPLAY_W, SCALE, ANIMATION_COOLDOWN, 
+    GRAVITY, VERTICAL_SPEED, HORIZONTAL_SPEED, PLAYERS
+)
 
 
 class Transition(Enum):
@@ -32,12 +28,11 @@ class States(Enum):
 
 class Character(Entity):
 
-    def __init__(self, num, x, y, scale):
+    def __init__(self, num, x, y):
         super().__init__()
         self.time = pygame.time.get_ticks()
         self.num = num
-        self.scale = scale
-        self.sprite = CharacterSprite(PLAYERS[num-1], scale)
+        self.sprite = CharacterSprite(PLAYERS[num-1])
         self.vel_x = 0
         self.vel_y = 0
         self.direction = 0 if x < DISPLAY_W/2 else 1
@@ -118,12 +113,12 @@ class Character(Entity):
     
     def right(self):
         self.direction = 0
-        self.vel_x = HORIZONTAL_SPEED * self.scale
+        self.vel_x = HORIZONTAL_SPEED * SCALE
 
     
     def left(self):
         self.direction = 1
-        self.vel_x = -HORIZONTAL_SPEED * self.scale
+        self.vel_x = -HORIZONTAL_SPEED * SCALE
 
 
     def jump(self):
@@ -204,7 +199,7 @@ class Character(Entity):
     
     def on_reset(self, player, x, y):
         if self.num == player:
-            self.sprite = CharacterSprite(PLAYERS[self.num-1], self.scale)
+            self.sprite = CharacterSprite(PLAYERS[self.num-1])
             self.setup_fsm()
             self.direction = 0 if x < DISPLAY_W/2 else 1
             self.setup_sprite(x, y)

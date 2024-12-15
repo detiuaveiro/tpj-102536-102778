@@ -2,16 +2,27 @@ import json
 from pathlib import Path 
 
 SETTINGS_FOLDER = "settings/"
+ASSETS_FOLDER = "assets/"
+MAP_FOLDER = "maps"
+MAP_FILE = "map.csv"
+MAP_METADATA = "map.json"
+
 DISPLAY_W, DISPLAY_H = 960, 640
 SCALE = 2
-MAP_FOLDER = "maps"
 TILESIZE = 32
 MENU_BOX_SIZE = (250, 50)
-RESISTANCES = ["lava", "water"]  # player 1, player 2
 TRESHOLD = 100
+ANIMATION_COOLDOWN = 100
 DEATH_FRAMES = 50
-SOUND_COOLDOWN = 0.1
 
+GRAVITY = 0.4
+HORIZONTAL_SPEED = 1
+VERTICAL_SPEED = 10
+
+PLAYERS = ['Fire Monster', 'Water Monster']    # player 1, player 2
+RESISTANCES = ["lava", "water"]                # player 1, player 2
+
+SOUND_COOLDOWN = 0.1
 SOUNDS = {
     "jump": "assets/Sounds/jump.mp3",
     "die": "assets/Sounds/die.mp3",

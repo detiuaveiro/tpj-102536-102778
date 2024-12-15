@@ -3,7 +3,7 @@ import pygame
 from utils import Entity, Event, Locator, EventsQ
 from entities import Character
 from game.Map import Map
-from game.consts import MAP_FOLDER, SCALE, DISPLAY_W, DISPLAY_H, TRESHOLD
+from game.consts import MAP_FOLDER, DISPLAY_W, DISPLAY_H, TRESHOLD
 
 
 class LevelManager(Entity):
@@ -40,7 +40,7 @@ class LevelManager(Entity):
         """
         Locator.clear()
         self.level = level if level is not None else (self.level + 1) % 4 
-        self.map = Map(f"{MAP_FOLDER}/{self.level}", scale=SCALE)
+        self.map = Map(f"{MAP_FOLDER}/{self.level}")
         self.map_width, self.map_height = self.map.get_map_size()
         self.map_rects = self.map.get_rects()
         self.surface = pygame.Surface((DISPLAY_W, self.map_height))

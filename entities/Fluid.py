@@ -6,6 +6,7 @@ from game.consts import RESISTANCES
 
 
 class Fluid(Entity):
+    
     def __init__(self, fluid_type):
         super().__init__()
         self.fluid_type = fluid_type

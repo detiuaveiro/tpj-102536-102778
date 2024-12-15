@@ -2,6 +2,7 @@ import pygame
 
 
 class Fluid(pygame.sprite.Sprite):
+    
     def __init__(self, image, x, y):
         super().__init__()
         self.image = image

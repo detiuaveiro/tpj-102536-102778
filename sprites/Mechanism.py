@@ -2,6 +2,7 @@ import pygame
 
 
 class Mechanism(pygame.sprite.Sprite):
+
     def __init__(self, type, image, x, y):
         super().__init__()
         self.type = type
@@ -18,8 +19,10 @@ class Mechanism(pygame.sprite.Sprite):
             pygame.transform.scale(image, (image.get_width(), image.get_height() + 5))
         ]
 
+
     def activate_trigger(self, pressed):
         self.image = self.trigger_images[pressed]
+
 
     def deactivate_trigger(self):
         self.image = self.trigger_images[0]

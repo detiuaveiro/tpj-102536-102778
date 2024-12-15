@@ -1,10 +1,10 @@
-
 from utils import Subject, Event, Locator, EventsQ
 from entities import Character, Menu, LevelManager, Transition
-from game.consts import DISPLAY_W, DISPLAY_H, SCALE
+from game.consts import DISPLAY_W, DISPLAY_H
+
 
 class Game(Subject):
-    
+
     def __init__(self):
         super().__init__()
         self.set_display_size(DISPLAY_W, DISPLAY_H)
@@ -16,8 +16,8 @@ class Game(Subject):
             Event.UPDATE_GAME
         )
 
-        Locator.add(Character(1, x=0, y=0, scale=SCALE))
-        Locator.add(Character(2, x=0, y=0, scale=SCALE))
+        Locator.add(Character(1, x=0, y=0))
+        Locator.add(Character(2, x=0, y=0))
         self.level_manager = LevelManager()
         self.transition = Transition()
 

@@ -7,8 +7,6 @@ from sprites import HomeMenu, GameMenu, LevelsMenu, SettingsMenu
 from game.consts import SETTINGS, SETTINGS_FOLDER
 
 
-BOX_SIZE = (250, 50)
-
 class Menu(Entity):
 
     def __init__(self, game):
@@ -53,31 +51,38 @@ class Menu(Entity):
         self.menus = []
         EventsQ.add(Event.NEW_LEVEL, level=1)
 
+
     def restart(self):
         self.menus = []
         EventsQ.add(Event.RESTART_LEVEL)
 
+
     def resume(self):
         self.menus = []
+
 
     def level(self, level):
         self.menus = []
         EventsQ.add(Event.NEW_LEVEL, level=level)
 
+
     def levels(self):
         self.menus.append(LevelsMenu(self))
+
 
     def settings(self):
         self.menus.append(SettingsMenu(self))
 
+
     def back(self):
         self.menus.pop()
+
 
     def exit(self):
         self.game.running = False
 
-    def load_controls(self):
 
+    def load_controls(self):
         file_path = filedialog.askopenfilename(
             initialdir=SETTINGS_FOLDER,
             title="Select file",
@@ -91,7 +96,6 @@ class Menu(Entity):
 
 
     def save_controls(self):
-
         file_path = filedialog.asksaveasfilename(
             initialdir=SETTINGS_FOLDER,
             title="Select file",
